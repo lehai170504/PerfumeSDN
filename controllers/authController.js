@@ -1,48 +1,74 @@
 const Member = require("../models/Member");
 const generateToken = require("../utils/generateToken");
+const sendResponse = require("../middleware/responseHandler");
 
 const authMember = async (req, res) => {
   const { email, password } = req.body;
 
-  const member = await Member.findOne({ email });
+  try {
+    const member = await Member.findOne({ email });
 
-  if (member && (await member.matchPassword(password))) {
-    res.json({
-      _id: member._id,
-      name: member.name,
-      email: member.email,
-      isAdmin: member.isAdmin,
-      token: generateToken(member._id), // Trả về token khi đăng nhập thành công
-    });
-  } else {
-    res.status(401).json({ message: "Invalid email or password" }); // Unauthorized
+    if (member && (await member.matchPassword(password))) {
+      return sendResponse(res, 200, true, "Đăng nhập thành công", {
+        user: {
+          id: member._id,
+          name: member.name,
+          email: member.email,
+          isAdmin: member.isAdmin,
+        },
+        token: generateToken(member._id),
+      });
+    } else {
+      return sendResponse(res, 401, false, "Email hoặc mật khẩu không hợp lệ");
+    }
+  } catch (error) {
+    return sendResponse(res, 500, false, "Lỗi server", null, error.message);
   }
 };
 
 const registerMember = async (req, res) => {
-  const { name, email, password, YOB, gender } = req.body;
-  const memberExists = await Member.findOne({ email });
-  if (memberExists) {
-    return res.status(400).json({ message: "Member already exists" }); // Bad Request
-  }
-  const member = await Member.create({
-    email,
-    password,
-    name,
-    YOB,
-    gender,
-  });
+  const { name, email, password, YOB, gender, adminKey } = req.body;
 
-  if (member) {
-    res.status(201).json({
-      _id: member._id,
-      name: member.name,
-      email: member.email,
-      isAdmin: member.isAdmin,
-      token: generateToken(member._id), // Trả về token khi đăng ký thành công
+  try {
+    const memberExists = await Member.findOne({ email });
+    if (memberExists) {
+      return sendResponse(res, 400, false, "Thành viên đã tồn tại");
+    }
+
+    // Mặc định user thường
+    let isAdmin = false;
+
+    // Nếu có adminKey đúng -> cho phép tạo admin
+    if (adminKey && adminKey === process.env.ADMIN_KEY) {
+      isAdmin = true;
+    }
+
+    const member = await Member.create({
+      email,
+      password,
+      name,
+      YOB,
+      gender,
+      isAdmin,
     });
-  } else {
-    res.status(400).json({ message: "Invalid member data" }); // Bad Request
+
+    if (member) {
+      return sendResponse(res, 201, true, "Đăng ký thành công", {
+        user: {
+          id: member._id,
+          name: member.name,
+          email: member.email,
+          YOB: member.YOB,
+          gender: member.gender,
+          isAdmin: member.isAdmin,
+        },
+        token: generateToken(member._id),
+      });
+    } else {
+      return sendResponse(res, 400, false, "Dữ liệu thành viên không hợp lệ");
+    }
+  } catch (error) {
+    return sendResponse(res, 500, false, "Lỗi server", null, error.message);
   }
 };
 

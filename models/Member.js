@@ -8,7 +8,7 @@ const memberSchema = new Schema(
     password: { type: String, required: true },
     name: { type: String },
     YOB: { type: Number },
-    gender: { type: Boolean },
+    gender: { type: String },
     isAdmin: { type: Boolean, default: false }, // Default role is not Admin [cite: 16, 45, 69]
   },
   { timestamps: true }

@@ -1,5 +1,4 @@
 const swaggerJsdoc = require("swagger-jsdoc");
-const AuthSchema = require("./schema");
 
 const options = {
   // Định nghĩa thông tin cơ bản về API của bạn
@@ -18,7 +17,6 @@ const options = {
     ],
     // TÍCH HỢP SCHEMAS VÀ SECURITY
     components: {
-      schemas: AuthSchema, // BẮT BUỘC: Tích hợp schemas vào đây
       securitySchemes: {
         BearerAuth: {
           type: "http",
