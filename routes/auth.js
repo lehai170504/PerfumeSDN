@@ -3,7 +3,8 @@ const { registerMember, authMember } = require("../controllers/authController");
 const router = express.Router();
 
 // Import Middleware và Validation Schemas
-const { validate } = require("../middleware/validate");
+const validate = require("../middleware/validate");
+
 const { registerSchema, loginSchema } = require("../validations/auth");
 
 // ----------------------------------------------------

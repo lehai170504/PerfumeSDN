@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/auth");
 const memberRoutes = require("./routes/memberRoutes");
+const brandRoutes = require("./routes/brandRoutes");
 
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./swagger/swagger");
@@ -21,6 +22,7 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 // Mount API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/members", memberRoutes);
+app.use("/api/brands", brandRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
