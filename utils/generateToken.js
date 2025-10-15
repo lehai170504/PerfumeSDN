@@ -1,9 +1,13 @@
+// utils/generateToken.js
 const jwt = require("jsonwebtoken");
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "30d", // Token hết hạn sau 30 ngày
-  });
+// Cần thêm tham số isAdmin vào đây
+const generateToken = (id, isAdmin) => {
+  return jwt.sign(
+    { id, isAdmin }, // <--- BƯỚC QUAN TRỌNG
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
 };
 
 module.exports = generateToken;

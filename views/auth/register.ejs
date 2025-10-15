@@ -1,0 +1,141 @@
+<div class="flex justify-center items-center py-10 px-4">
+  <div class="w-full max-w-lg">
+    <div class="card bg-base-100 shadow-2xl border border-base-300">
+      <div
+        class="card-title justify-center bg-success text-success-content p-6 rounded-t-2xl"
+      >
+        <h3 class="text-3xl font-bold">Tạo Tài khoản Thành viên</h3>
+      </div>
+
+      <div class="card-body p-8">
+        <form action="/api/auth/register" method="POST" class="space-y-4">
+          <% if (typeof message !== 'undefined' && message) { %>
+          <div role="alert" class="alert alert-info">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="stroke-current shrink-0 w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            <span><%= message %></span>
+          </div>
+          <% } %>
+
+          <div class="form-control">
+            <label for="name" class="label">
+              <span class="label-text font-semibold">Họ và tên</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="input input-bordered w-full"
+              placeholder="Ví dụ: Nguyễn Văn A"
+            />
+          </div>
+
+          <div class="form-control">
+            <label for="email" class="label">
+              <span class="label-text font-semibold">Email</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="input input-bordered w-full"
+              placeholder="example@domain.com"
+            />
+          </div>
+
+          <div class="form-control">
+            <label for="password" class="label">
+              <span class="label-text font-semibold">Mật khẩu</span>
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              class="input input-bordered w-full"
+              placeholder="Mật khẩu tối thiểu 6 ký tự"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label for="yob" class="label">
+                <span class="label-text font-semibold">Năm sinh (YOB)</span>
+              </label>
+              <input
+                type="number"
+                id="yob"
+                name="YOB"
+                required
+                class="input input-bordered w-full"
+                min="1900"
+                max="<%= new Date().getFullYear() %>"
+              />
+            </div>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-semibold">Giới tính</span>
+              </label>
+              <div class="flex gap-6 pt-1 items-center h-full">
+                <label class="label cursor-pointer gap-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    id="male"
+                    value="true"
+                    required
+                    class="radio checked:bg-primary"
+                  />
+                  <span for="male" class="label-text">Nam</span>
+                </label>
+
+                <label class="label cursor-pointer gap-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    id="female"
+                    value="false"
+                    required
+                    class="radio checked:bg-primary"
+                  />
+                  <span for="female" class="label-text">Nữ</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-control pt-4">
+            <button type="submit" class="btn btn-success btn-lg w-full">
+              Đăng ký
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="card-actions justify-center p-4 border-t border-base-200 bg-base-200 rounded-b-2xl"
+      >
+        <span class="text-base-content">
+          Đã có tài khoản?
+          <a href="/auth/login" class="link link-hover link-primary font-bold"
+            >Đăng nhập</a
+          >
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

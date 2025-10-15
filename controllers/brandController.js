@@ -42,7 +42,7 @@ exports.createBrand = async (req, res, next) => {
     return sendResponse(res, 201, true, "Brand created successfully", brand);
   } catch (err) {
     // Handle validation or duplicate key errors from Mongoose
-    if (err.name === "ValidationError" || err.code === 11000) {
+    if (err.brandName === "ValidationError" || err.code === 11000) {
       return sendResponse(
         res,
         400,
@@ -74,7 +74,7 @@ exports.updateBrand = async (req, res, next) => {
     }
   } catch (err) {
     // Handle validation or Mongoose errors
-    if (err.name === "ValidationError" || err.code === 11000) {
+    if (err.brandName === "ValidationError" || err.code === 11000) {
       return sendResponse(
         res,
         400,
@@ -99,7 +99,7 @@ exports.deleteBrand = async (req, res, next) => {
         res,
         200,
         true,
-        `Brand ${brand.name} deleted successfully`
+        `Brand ${brand.brandName} deleted successfully`
       );
     } else {
       // Not Found: 404

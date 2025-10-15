@@ -1,0 +1,63 @@
+<div class="container mx-auto px-4 md:px-6 lg:px-8">
+  <div class="p-6 md:p-10">
+    <h2 class="text-3xl font-bold mb-2 text-base-content">
+      Quản lý Thành viên (Admin Only) 👥
+    </h2>
+    <p class="mb-6 text-base-content/80">
+      Danh sách tất cả thành viên đã đăng ký trong hệ thống.
+    </p>
+
+    <div class="overflow-x-auto shadow-xl rounded-lg border border-base-300">
+      <table class="table w-full table-zebra">
+        <thead>
+          <tr class="bg-base-200">
+            <th class="w-16">STT</th>
+            <th>Tên</th>
+            <th>Email</th>
+            <th>Năm sinh</th>
+            <th>Giới tính</th>
+            <th class="text-center">Vai trò</th>
+            <th class="w-24">Thao tác</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% if (members && members.length > 0) { %> <% members.forEach((member,
+          index) => { %>
+          <tr class="hover:bg-base-100">
+            <td class="font-bold"><%= index + 1 %></td>
+            <td><%= member.name %></td>
+            <td><%= member.email %></td>
+            <td><%= member.YOB %></td>
+            <td>
+              <span class="badge badge-outline">
+                <%= member.gender ? 'Nam' : 'Nữ' %>
+              </span>
+            </td>
+            <td class="text-center">
+              <% if (member.isAdmin) { %>
+              <div
+                class="badge badge-lg badge-error font-bold text-base-100 shadow-md"
+              >
+                ADMIN
+              </div>
+              <% } else { %>
+              <div class="badge badge-success badge-outline">Member</div>
+              <% } %>
+            </td>
+            <td>
+              <button class="btn btn-ghost btn-xs">Chi tiết</button>
+            </td>
+          </tr>
+          <% }) %> <% } else { %>
+          <tr>
+            <td colspan="7" class="text-center py-6 text-base-content/70">
+              Không có thành viên nào.
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

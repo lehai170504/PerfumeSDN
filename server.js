@@ -1,32 +1,60 @@
 const express = require("express");
+const expressLayouts = require("express-ejs-layouts");
+const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
+const path = require("path");
 const connectDB = require("./config/db");
+const methodOverride = require("method-override");
 
+// --- API Routes ---
 const authRoutes = require("./routes/auth");
 const memberRoutes = require("./routes/memberRoutes");
 const brandRoutes = require("./routes/brandRoutes");
+const perfumeRoutes = require("./routes/perfumeRoutes");
+// const commentRoutes = require("./routes/commentRoutes");
 
+// --- WEB Routes (EJS View) ---
+const webRoutes = require("./routes/webRoutes");
+
+// --- Swagger ---
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./swagger/swagger");
 
+// Cấu hình môi trường và Database
 dotenv.config();
 connectDB();
 
 const app = express();
 
+// --- 1. Cấu hình Middleware cơ bản ---
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+app.use(cookieParser());
 
+// --- 2. Cấu hình EJS View Engine và Static Files ---
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views")); // Đặt thư mục views
+app.use(express.static(path.join(__dirname, "public"))); // Cấu hình thư mục assets (CSS/JS/Images)
+
+app.use(expressLayouts);
+app.set("layout", "layouts/main");
+
+// --- 3. Mount API Routes (/api/v1/...) ---
 // Swagger docs
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-// Mount API routes
+// Mount các tuyến API (những tuyến trả về JSON)
 app.use("/api/auth", authRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/brands", brandRoutes);
+app.use("/api/perfumes", perfumeRoutes);
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+// --- 4. Mount WEB Routes (Tuyến giao diện người dùng) ---
+app.use("/", webRoutes); // Tuyến chính để render EJS (/, /login, /profile, /perfumes/:id)
+
+// Ghi chú: Nếu bạn có Global Error Handler, bạn nên đặt nó ở đây
+// app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

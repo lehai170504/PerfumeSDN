@@ -39,7 +39,7 @@ const brandRouter = express.Router();
  *                   _id:
  *                     type: string
  *                     example: 652fc9f7acb123456789abcd
- *                   name:
+ *                   brandName:
  *                     type: string
  *                     example: Chanel
  *                   createdAt:
@@ -62,9 +62,9 @@ const brandRouter = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - name
+ *               - brandName
  *             properties:
- *               name:
+ *               brandName:
  *                 type: string
  *                 example: Gucci
  *     responses:
@@ -78,7 +78,7 @@ const brandRouter = express.Router();
  *                 _id:
  *                   type: string
  *                   example: 652fc9f7acb123456789abcd
- *                 name:
+ *                 brandName:
  *                   type: string
  *                   example: Gucci
  *                 createdAt:
@@ -128,7 +128,7 @@ brandRouter
  *                 _id:
  *                   type: string
  *                   example: 652fc9f7acb123456789abcd
- *                 name:
+ *                 brandName:
  *                   type: string
  *                   example: Dior
  *                 createdAt:
@@ -158,7 +158,7 @@ brandRouter
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               brandName:
  *                 type: string
  *                 example: Dior Updated
  *     responses:

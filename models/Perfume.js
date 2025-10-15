@@ -1,29 +1,32 @@
+// models/Perfume.js
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 const { Schema } = mongoose;
+require("./Comment");
 
 const perfumeSchema = new Schema(
   {
     perfumeName: { type: String, required: true },
     uri: { type: String, required: true, unique: true },
     price: { type: Number, required: true },
-    concentration: { type: String, required: true }, //nồng độ của nước hoa: Extrait, EDP, EDT,…
-    description: { type: String, require: true },
-    ingredients: { type: String, require: true },
-    volume: { type: Number, require: true },
-    targetAudience: { type: String, require: true }, // male, femail, unisex
-    comments: [commentSchema],
+    concentration: { type: String, required: true }, // Extrait, EDP, EDT,...
+    description: { type: String, required: true },
+    ingredients: { type: String, required: true },
+    volume: { type: Number, required: true },
+    targetAudience: { type: String, required: true }, // male, female, unisex
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
     brand: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Brands",
-      require: true,
+      ref: "Brand",
+      required: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const Perfume = mongoose.model("Perfume", perfumeSchema);
-
 module.exports = Perfume;

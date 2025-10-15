@@ -1,5 +1,9 @@
 const express = require("express");
-const { registerMember, authMember } = require("../controllers/authController");
+const {
+  registerMember,
+  authMember,
+  logoutMember,
+} = require("../controllers/authController");
 const router = express.Router();
 
 // Import Middleware và Validation Schemas
@@ -132,5 +136,6 @@ router.post("/register", validate(registerSchema), registerMember);
  *                   example: Email hoặc mật khẩu không hợp lệ
  */
 router.post("/login", validate(loginSchema), authMember);
+router.post("/logout", logoutMember);
 
 module.exports = router;

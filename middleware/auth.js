@@ -1,31 +1,39 @@
+// middleware/authMiddleware.js
 const jwt = require("jsonwebtoken");
 const Member = require("../models/Member");
 
 const protect = async (req, res, next) => {
-  let token;
+  // 1. Ưu tiên lấy token từ HTTP-Only Cookie (Phù hợp với SSR như EJS)
+  let token = req.cookies.jwt;
 
+  // 2. Nếu không có trong Cookie, kiểm tra Header Authorization (Nếu có)
   if (
+    !token &&
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
-    try {
-      // Lấy token từ header
-      token = req.headers.authorization.split(" ")[1];
-
-      // Giải mã token (verify)
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // Gắn thông tin member vào request
-      req.member = await Member.findById(decoded.id).select("-password");
-      next();
-    } catch (error) {
-      console.error(error);
-      res.status(401).json({ message: "Not authorized, token failed" });
-    }
+    token = req.headers.authorization.split(" ")[1];
   }
 
   if (!token) {
-    res.status(401).json({ message: "Not authorized, no token" });
+    // Nếu không có token, chuyển hướng người dùng đến trang đăng nhập EJS
+    return res.redirect("/auth/login");
+  }
+
+  try {
+    // Giải mã token (verify)
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Gắn thông tin member vào request
+    req.member = await Member.findById(decoded.id).select("-password");
+    req.isAdmin = decoded.isAdmin; //
+
+    next();
+  } catch (error) {
+    console.error(error);
+    // Token không hợp lệ/hết hạn, xóa cookie và chuyển hướng về đăng nhập
+    res.clearCookie("jwt");
+    return res.redirect("/auth/login");
   }
 };
 

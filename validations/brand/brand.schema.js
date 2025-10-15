@@ -2,7 +2,7 @@
 const Joi = require("joi");
 
 const brandSchema = Joi.object({
-  name: Joi.string().required().min(2).max(100).messages({
+  brandName: Joi.string().required().min(2).max(100).messages({
     "string.empty": `Tên thương hiệu không được để trống.`,
     "string.min": `Tên thương hiệu phải có ít nhất {#limit} ký tự.`,
     "string.max": `Tên thương hiệu không được vượt quá {#limit} ký tự.`,
@@ -16,7 +16,7 @@ exports.createBrandSchema = brandSchema;
 // Schema cho việc cập nhật Brand (PUT) - Không cần required,
 // sử dụng .custom((value, helpers) => {}) để đảm bảo ít nhất 1 trường được gửi lên
 exports.updateBrandSchema = Joi.object({
-  name: Joi.string().min(2).max(100).messages({
+  brandName: Joi.string().min(2).max(100).messages({
     "string.empty": `Tên thương hiệu không được để trống.`,
     "string.min": `Tên thương hiệu phải có ít nhất {#limit} ký tự.`,
     "string.max": `Tên thương hiệu không được vượt quá {#limit} ký tự.`,
