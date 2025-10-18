@@ -1,66 +1,17 @@
-<footer class="bg-base-200 text-base-content mt-12 shadow-inner">
-  <div
-    class="footer container mx-auto p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8"
-  >
-    <aside class="col-span-full md:col-span-1 space-y-3">
-      <div class="flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="w-8 h-8 fill-current text-primary"
-        >
-          <path d="M12 2L18 7H6L12 2Z"></path>
-          <path
-            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-            fill="none"
-            stroke="currentColor"
-          ></path>
-        </svg>
-        <h5 class="text-2xl font-bold text-primary">Perfume Store</h5>
-      </div>
-      <p class="text-sm text-base-content opacity-80 max-w-xs">
-        Nền tảng mua bán nước hoa trực tuyến MERN Stack. Đảm bảo phân quyền
-        Admin và Member theo yêu cầu.
-      </p>
-    </aside>
-
-    <nav class="md:col-span-1 lg:col-start-3">
-      <h6 class="footer-title text-lg font-semibold text-accent mb-3">
-        Liên kết
-      </h6>
-      <div class="flex flex-col gap-2">
-        <a href="/" class="link link-hover">Trang chủ</a>
-        <% if (member) { %>
-        <a href="/profile" class="link link-hover">Profile</a>
-        <% } else { %>
-        <a href="/auth/login" class="link link-hover">Đăng nhập</a>
-        <% } %>
-      </div>
-    </nav>
-
-    <nav class="md:col-span-1">
-      <h6 class="footer-title text-lg font-semibold text-accent mb-3">
-        Thông tin
-      </h6>
-      <div class="flex flex-col gap-2">
-        <a class="link link-hover">Về chúng tôi</a>
-        <a class="link link-hover">Liên hệ</a>
-        <a class="link link-hover">Chính sách bảo mật</a>
-      </div>
-    </nav>
-  </div>
-
-  <div
-    class="bg-base-300 text-center p-4 text-base-content text-sm border-t border-base-content opacity-10"
-  >
-    © 2025 Bản quyền:
-    <strong class="font-bold">FPT University - MERN Assignment</strong>
-  </div>
+</main>
+<footer class="footer p-10 bg-neutral text-neutral-content mt-auto">
+    <div class="container mx-auto flex justify-between items-center">
+        <aside>
+            <p class="text-2xl font-bold">Perfume Bliss</p>
+            <p>FPT Assignment 2025<br/>Thực hiện MERN Stack Project.</p>
+        </aside>
+        <nav>
+            <header class="footer-title">Liên kết</header> 
+            <a class="link link-hover" href="/">Trang chủ</a> 
+            <a class="link link-hover" href="/auth/register">Đăng ký</a> 
+            <a class="link link-hover" href="/admin/dashboard">Admin</a>
+        </nav>
+    </div>
 </footer>
+</body>
+</html>

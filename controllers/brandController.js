@@ -1,85 +1,106 @@
 // controllers/brandController.js
-
 const Brand = require("../models/Brand");
 const sendResponse = require("../middleware/responseHandler");
 
-// 1. GET ALL BRANDS (Public Route)
+/* ===================================================
+ * 🧠 SHARED LOGIC — dùng được cho EJS & API
+ * =================================================== */
+exports.findAllBrands = async () => {
+  try {
+    return await Brand.find();
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy danh sách thương hiệu:", error);
+    return [];
+  }
+};
+
+exports.findBrandById = async (id) => {
+  try {
+    return await Brand.findById(id);
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy thương hiệu theo ID:", error);
+    return null;
+  }
+};
+
+/* ===================================================
+ * ⚙️ API CONTROLLERS — dùng cho Swagger / API routes
+ * =================================================== */
+
+// GET ALL BRANDS
 exports.getAllBrands = async (req, res, next) => {
   try {
     const brands = await Brand.find({});
-    // Success: 200 OK
-    return sendResponse(res, 200, true, "Brands fetched successfully", brands);
+    return sendResponse(res, 200, true, "Danh sách thương hiệu", brands);
   } catch (err) {
-    // Pass the error to the Express error handler (or handle it with sendResponse if necessary)
     next(err);
   }
 };
 
-// 2. GET BRAND BY ID (Public Route)
+// GET BRAND BY ID
 exports.getBrandById = async (req, res, next) => {
   try {
     const brand = await Brand.findById(req.params.brandId);
-    if (brand) {
-      // Success: 200 OK
-      return sendResponse(res, 200, true, "Brand fetched successfully", brand);
-    } else {
-      // Not Found: 404
-      return sendResponse(res, 404, false, "Brand not found");
-    }
+    if (!brand)
+      return sendResponse(res, 404, false, "Không tìm thấy thương hiệu");
+    return sendResponse(res, 200, true, "Lấy thương hiệu thành công", brand);
   } catch (err) {
-    // For invalid ID format (CastError), next(err) will typically catch it,
-    // but for immediate response, you might add a check here.
     next(err);
   }
 };
 
-// 3. CREATE BRAND (Admin Only)
+// CREATE BRAND (API)
 exports.createBrand = async (req, res, next) => {
   try {
-    // Validate request body content here if needed
     const brand = await Brand.create(req.body);
-    // Created: 201
-    return sendResponse(res, 201, true, "Brand created successfully", brand);
+    return sendResponse(res, 201, true, "Tạo thương hiệu thành công", brand);
   } catch (err) {
-    // Handle validation or duplicate key errors from Mongoose
-    if (err.brandName === "ValidationError" || err.code === 11000) {
+    if (err.name === "ValidationError" || err.code === 11000) {
       return sendResponse(
         res,
         400,
         false,
-        "Failed to create brand due to invalid data or duplicate name",
+        "Dữ liệu không hợp lệ",
         null,
         err.message
       );
     }
-    next(err); // Pass other errors to the global error handler
+    next(err);
   }
 };
 
-// 4. UPDATE BRAND (Admin Only)
+// UPDATE BRAND (API)
 exports.updateBrand = async (req, res, next) => {
   try {
+    const { brandId } = req.params;
     const brand = await Brand.findByIdAndUpdate(
-      req.params.brandId,
+      brandId,
       { $set: req.body },
-      { new: true, runValidators: true } // { new: true } returns the updated document
+      { new: true, runValidators: true }
     );
 
-    if (brand) {
-      // Success: 200 OK
-      return sendResponse(res, 200, true, "Brand updated successfully", brand);
-    } else {
-      // Not Found: 404
-      return sendResponse(res, 404, false, "Brand not found for update");
-    }
+    if (!brand)
+      return sendResponse(
+        res,
+        404,
+        false,
+        "Không tìm thấy thương hiệu để cập nhật"
+      );
+
+    return sendResponse(
+      res,
+      200,
+      true,
+      "Cập nhật thương hiệu thành công",
+      brand
+    );
   } catch (err) {
-    // Handle validation or Mongoose errors
-    if (err.brandName === "ValidationError" || err.code === 11000) {
+    if (err.name === "ValidationError" || err.code === 11000) {
       return sendResponse(
         res,
         400,
         false,
-        "Failed to update brand due to invalid data or duplicate name",
+        "Dữ liệu không hợp lệ",
         null,
         err.message
       );
@@ -88,24 +109,109 @@ exports.updateBrand = async (req, res, next) => {
   }
 };
 
-// 5. DELETE BRAND (Admin Only)
+// DELETE BRAND (API)
 exports.deleteBrand = async (req, res, next) => {
   try {
-    const brand = await Brand.findByIdAndDelete(req.params.brandId);
+    const { brandId } = req.params;
+    const brand = await Brand.findByIdAndDelete(brandId);
 
-    if (brand) {
-      // Success: 200 OK
-      return sendResponse(
-        res,
-        200,
-        true,
-        `Brand ${brand.brandName} deleted successfully`
-      );
-    } else {
-      // Not Found: 404
-      return sendResponse(res, 404, false, "Brand not found for deletion");
-    }
+    if (!brand)
+      return sendResponse(res, 404, false, "Không tìm thấy thương hiệu để xóa");
+
+    return sendResponse(
+      res,
+      200,
+      true,
+      `Đã xóa thương hiệu ${brand.brandName}`
+    );
   } catch (err) {
     next(err);
+  }
+};
+
+/* ===================================================
+ * 🧩 EJS ADMIN CONTROLLERS — có redirect + flash message
+ * =================================================== */
+
+// [POST] /admin/brands
+exports.createBrandWeb = async (req, res, next) => {
+  try {
+    const { brandName } = req.body;
+    if (!brandName || brandName.trim() === "") {
+      req.session.message = {
+        type: "error",
+        text: "Tên thương hiệu không được để trống!",
+      };
+      return res.redirect("/admin/manage_brands");
+    }
+
+    await Brand.create({ brandName });
+    console.log("✅ Tạo thương hiệu:", brandName);
+
+    req.session.message = {
+      type: "success",
+      text: "Tạo thương hiệu mới thành công!",
+    };
+    return res.redirect("/admin/manage_brands");
+  } catch (error) {
+    console.error("❌ Lỗi khi tạo thương hiệu:", error);
+    req.session.message = {
+      type: "error",
+      text: "Đã xảy ra lỗi khi tạo thương hiệu.",
+    };
+    next(error);
+  }
+};
+
+// [PUT] /admin/brands/:id
+exports.updateBrandWeb = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { brandName } = req.body;
+
+    const brand = await Brand.findById(id);
+    if (!brand) {
+      req.session.message = {
+        type: "error",
+        text: "Không tìm thấy thương hiệu để cập nhật!",
+      };
+      return res.redirect("/admin/manage_brands");
+    }
+
+    brand.brandName = brandName;
+    await brand.save();
+
+    console.log("✅ Cập nhật thương hiệu:", brandName);
+    req.session.message = {
+      type: "success",
+      text: "Cập nhật thương hiệu thành công!",
+    };
+    return res.redirect("/admin/manage_brands");
+  } catch (error) {
+    console.error("❌ Lỗi khi cập nhật thương hiệu:", error);
+    req.session.message = {
+      type: "error",
+      text: "Lỗi trong quá trình cập nhật thương hiệu.",
+    };
+    next(error);
+  }
+};
+
+// [DELETE] /admin/brands/:id
+exports.deleteBrandWeb = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Brand.findByIdAndDelete(id);
+
+    console.log("🗑️ Đã xóa thương hiệu:", id);
+    req.session.message = {
+      type: "success",
+      text: "Xóa thương hiệu thành công!",
+    };
+    return res.redirect("/admin/manage_brands");
+  } catch (error) {
+    console.error("❌ Lỗi khi xóa thương hiệu:", error);
+    req.session.message = { type: "error", text: "Không thể xóa thương hiệu." };
+    next(error);
   }
 };

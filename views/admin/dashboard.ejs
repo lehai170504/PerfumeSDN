@@ -1,186 +1,74 @@
-<% if (member && member.isAdmin) { %>
+<%- include('../partials/header', { title: 'Admin Dashboard', user: loggedInUser
+}) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
 
-<div class="p-8 md:p-12 bg-base-300 shadow-lg mb-8">
-  <h1
-    class="text-4xl md:text-5xl font-extrabold text-primary mb-2 tracking-wide"
-  >
-    ADMIN DASHBOARD
+<div class="container mx-auto">
+  <h1 class="text-4xl font-bold mb-8 text-secondary">
+    Chào mừng, Admin <%= loggedInUser ? loggedInUser.name : 'Quản trị viên' %>!
   </h1>
-  <p class="text-lg text-base-content/80">
-    Chào mừng trở lại, <span class="font-semibold"><%= member.name %></span>!
-    Đây là giao diện quản trị hệ thống.
-  </p>
-</div>
-<div class="px-8 md:px-12 mb-10">
-  <h2
-    class="text-2xl font-bold mb-5 text-base-content border-b pb-2 border-base-300"
-  >
-    Tổng quan nhanh 📊
-  </h2>
 
-  <div
-    class="stats stats-vertical lg:stats-horizontal shadow w-full border border-base-300"
-  >
-    <div class="stat bg-base-100 hover:bg-base-200 transition-colors">
-      <div class="stat-figure text-primary">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="inline-block w-8 h-8 stroke-current"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-      </div>
-      <div class="stat-title text-base-content/70">Tổng Sản phẩm</div>
-      <div class="stat-value text-primary">--</div>
-      <div class="stat-desc">Dữ liệu cần tích hợp API</div>
-    </div>
-
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
     <div
-      class="stat bg-base-100 border-l border-r border-base-300 hover:bg-base-200 transition-colors"
+      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
     >
-      <div class="stat-figure text-secondary">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="inline-block w-8 h-8 stroke-current"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 4.5V15m0 0l-4-4m4 4l4-4m4 5.5v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2"
-          ></path>
-        </svg>
-      </div>
-      <div class="stat-title text-base-content/70">Thành viên mới (Tháng)</div>
-      <div class="stat-value text-secondary">--</div>
-      <div class="stat-desc">Đang chờ cập nhật...</div>
-    </div>
-
-    <div class="stat bg-base-100 hover:bg-base-200 transition-colors">
-      <div class="stat-figure text-accent">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="inline-block w-8 h-8 stroke-current"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 8h14M5 12h14M5 16h14"
-          ></path>
-        </svg>
-      </div>
-      <div class="stat-title text-base-content/70">Đơn hàng cần xử lý</div>
-      <div class="stat-value text-accent">--</div>
-      <div class="stat-desc">Đang chờ cập nhật...</div>
-    </div>
-  </div>
-</div>
-<hr class="my-8 mx-8 md:mx-12 border-base-300" />
-
-<div class="px-8 md:px-12 mb-10">
-  <h2
-    class="text-2xl font-bold mb-5 text-base-content border-b pb-2 border-base-300"
-  >
-    Quản lý chức năng ⚙️
-  </h2>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div
-      class="card bg-base-100 shadow-xl border-t-4 border-primary hover:shadow-2xl transition-shadow"
-    >
-      <div class="card-body p-6">
-        <h2 class="card-title text-primary text-xl font-bold">
-          Quản lý Thương hiệu (Brands)
-        </h2>
-        <p class="text-base-content/80 text-sm">
-          Thực hiện các thao tác GET, POST, PUT, DELETE đối với Thương hiệu.
-        </p>
-        <div class="card-actions justify-end pt-4">
-          <a href="/admin/brands" class="btn btn-sm btn-primary">
-            Xem & Quản lý Brands
-          </a>
+      <div class="card-body">
+        <h2 class="card-title text-primary">Quản lý Nước hoa</h2>
+        <div class="card-actions justify-end">
+          <a href="/admin/manage_perfumes" class="btn btn-primary">Xem</a>
         </div>
       </div>
     </div>
 
     <div
-      class="card bg-base-100 shadow-xl border-t-4 border-success hover:shadow-2xl transition-shadow"
+      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
     >
-      <div class="card-body p-6">
-        <h2 class="card-title text-success text-xl font-bold">
-          Quản lý Nước hoa (Perfumes)
-        </h2>
-        <p class="text-base-content/80 text-sm">
-          Thực hiện các thao tác GET, POST, PUT, DELETE đối với Nước hoa.
-        </p>
-        <div class="card-actions justify-end pt-4">
-          <a href="/admin/perfumes" class="btn btn-sm btn-success">
-            Xem & Thêm Perfumes
-          </a>
+      <div class="card-body">
+        <h2 class="card-title text-primary">Quản lý Thương hiệu</h2>
+        <div class="card-actions justify-end">
+          <a href="/admin/manage_brands" class="btn btn-primary">Xem</a>
         </div>
       </div>
     </div>
 
     <div
-      class="card bg-base-100 shadow-xl border-t-4 border-info hover:shadow-2xl transition-shadow"
+      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
     >
-      <div class="card-body p-6">
-        <h2 class="card-title text-info text-xl font-bold">
-          Quản lý Thành viên
-        </h2>
-        <p class="text-base-content/80 text-sm">
-          Xem danh sách tất cả thành viên đã đăng ký và quản lý tài khoản.
-        </p>
-        <div class="card-actions justify-end pt-4">
-          <a href="/admin/collectors" class="btn btn-sm btn-info">
-            Xem Danh sách Member
-          </a>
+      <div class="card-body">
+        <h2 class="card-title text-primary">Quản lý Thành viên</h2>
+        <div class="card-actions justify-end">
+          <a href="/admin/manage_members" class="btn btn-primary">Xem</a>
         </div>
       </div>
     </div>
 
     <div
-      class="card bg-base-100 shadow-xl border-t-4 border-neutral hover:shadow-2xl transition-shadow"
+      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
     >
-      <div class="card-body p-6">
-        <h2 class="card-title text-neutral text-xl font-bold">
-          Tài liệu API (Swagger)
-        </h2>
-        <p class="text-base-content/80 text-sm">
-          Truy cập tài liệu để kiểm tra các API endpoints và tích hợp.
-        </p>
-        <div class="card-actions justify-end pt-4">
-          <a href="/api-docs" target="_blank" class="btn btn-sm btn-neutral">
-            Truy cập API Docs
-          </a>
+      <div class="card-body">
+        <h2 class="card-title text-primary">Thống kê</h2>
+        <p>Tổng số thành viên, nước hoa, và thương hiệu.</p>
+        <div class="card-actions justify-end">
+          <button class="btn btn-ghost">Chi tiết</button>
         </div>
       </div>
     </div>
   </div>
-</div>
-<% } else { %>
-<div class="hero min-h-screen bg-base-200">
-  <div class="hero-content text-center">
-    <div class="max-w-md">
-      <h1 class="text-5xl font-bold text-error">Truy cập bị từ chối!</h1>
-      <p class="py-6">
-        Bạn không có quyền truy cập trang quản trị này. Vui lòng liên hệ quản
-        trị viên.
-      </p>
-      <a href="/" class="btn btn-primary">Về Trang chủ</a>
-    </div>
+
+  <div role="alert" class="alert alert-warning">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="stroke-current shrink-0 h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+      />
+    </svg>
+    >
   </div>
 </div>
-<% } %>
+
+<%- include('../partials/footer') %>

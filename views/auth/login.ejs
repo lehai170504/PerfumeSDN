@@ -1,22 +1,19 @@
-<div
-  class="flex justify-center items-center py-10 px-4 min-h-screen bg-base-200"
->
-  <div class="w-full max-w-md">
-    <div class="card bg-base-100 shadow-2xl border border-base-300">
-      <div
-        class="bg-primary text-primary-content p-6 rounded-t-lg border-b-4 border-primary-focus"
-      >
-        <h3 class="text-3xl font-extrabold tracking-wide text-center">
-          ĐĂNG NHẬP HỆ THỐNG 🔑
-        </h3>
-      </div>
+<%- include('../partials/header', { title: 'Đăng nhập', user: null }) %> <%-
+include('../partials/navbar', { user: null }) %>
 
-      <div class="card-body p-8 space-y-6">
-        <% if (typeof error !== 'undefined' && error) { %>
-        <div role="alert" class="alert alert-error text-sm shadow-md">
+<div class="hero min-h-screen bg-base-200 -mt-24 pt-24">
+  <div class="hero-content flex-col">
+    <div class="text-center">
+      <h1 class="text-5xl font-bold text-secondary">Chào mừng trở lại!</h1>
+      <p class="py-6">Đăng nhập để quản lý hồ sơ và gửi phản hồi</p>
+    </div>
+    <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+      <form action="/auth/login" method="POST" class="card-body">
+        <% if (error) { %>
+        <div role="alert" class="alert alert-error mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-5 w-5"
+            class="stroke-current shrink-0 h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -30,70 +27,37 @@
           <span><%= error %></span>
         </div>
         <% } %>
-
-        <form action="/api/auth/login" method="POST" class="space-y-6">
-          <div class="form-control">
-            <label for="email" class="label">
-              <span class="label-text font-semibold text-base-content"
-                >Email</span
-              >
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              class="input input-bordered w-full input-lg focus:ring-2 focus:ring-primary"
-              placeholder="Nhập địa chỉ email"
-            />
-          </div>
-
-          <div class="form-control">
-            <label for="password" class="label">
-              <span class="label-text font-semibold text-base-content"
-                >Mật khẩu</span
-              >
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              class="input input-bordered w-full input-lg focus:ring-2 focus:ring-primary"
-              placeholder="Nhập mật khẩu"
-            />
-            <label class="label justify-end">
-              <a
-                href="#"
-                class="label-text-alt link link-hover text-sm text-info"
-                >Quên mật khẩu?</a
-              >
-            </label>
-          </div>
-
-          <div class="form-control pt-4">
-            <button
-              type="submit"
-              class="btn btn-primary btn-lg w-full font-bold shadow-lg hover:shadow-xl transition-shadow"
-            >
-              Đăng nhập
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div
-        class="card-actions justify-center p-5 border-t border-base-300 bg-base-100 rounded-b-lg"
-      >
-        <p class="text-base text-center text-base-content/80">
-          Chưa có tài khoản?
-          <a
-            href="/auth/register"
-            class="link link-hover link-primary font-extrabold ml-1"
-            >Đăng ký ngay</a
+        <div class="form-control">
+          <label class="label"><span class="label-text">Email</span></label>
+          <input
+            type="email"
+            placeholder="Email đăng nhập"
+            name="email"
+            class="input input-bordered"
+            required
+          />
+        </div>
+        <div class="form-control">
+          <label class="label"><span class="label-text">Mật khẩu</span></label>
+          <input
+            type="password"
+            placeholder="Mật khẩu"
+            name="password"
+            class="input input-bordered"
+            required
+          />
+        </div>
+        <div class="form-control mt-6">
+          <button type="submit" class="btn btn-secondary">Đăng nhập</button>
+        </div>
+        <div class="text-center mt-4">
+          <a href="/auth/register" class="link link-hover text-primary"
+            >Đăng ký tài khoản mới</a
           >
-        </p>
-      </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>
+
+<%- include('../partials/footer') %>

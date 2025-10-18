@@ -1,10 +1,11 @@
 const express = require("express");
-const expressLayouts = require("express-ejs-layouts");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const path = require("path");
 const connectDB = require("./config/db");
 const methodOverride = require("method-override");
+const flash = require("connect-flash");
+const session = require("express-session");
 
 // --- API Routes ---
 const authRoutes = require("./routes/auth");
@@ -34,11 +35,17 @@ app.use(cookieParser());
 
 // --- 2. Cấu hình EJS View Engine và Static Files ---
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views")); // Đặt thư mục views
-app.use(express.static(path.join(__dirname, "public"))); // Cấu hình thư mục assets (CSS/JS/Images)
-
-app.use(expressLayouts);
-app.set("layout", "layouts/main");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "dist")));
+app.use(
+  session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(flash());
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 // --- 3. Mount API Routes (/api/v1/...) ---
 // Swagger docs
@@ -51,10 +58,7 @@ app.use("/api/brands", brandRoutes);
 app.use("/api/perfumes", perfumeRoutes);
 
 // --- 4. Mount WEB Routes (Tuyến giao diện người dùng) ---
-app.use("/", webRoutes); // Tuyến chính để render EJS (/, /login, /profile, /perfumes/:id)
-
-// Ghi chú: Nếu bạn có Global Error Handler, bạn nên đặt nó ở đây
-// app.use(errorHandler);
+app.use("/", webRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

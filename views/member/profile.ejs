@@ -1,0 +1,61 @@
+<%- include('../partials/header', { title: 'Cập nhật Hồ sơ', user: loggedInUser }) %>
+<%- include('../partials/navbar', { user: loggedInUser }) %>
+
+<div class="container mx-auto max-w-2xl">
+    <h1 class="text-3xl font-bold text-center mb-8 text-primary">Chỉnh sửa Hồ sơ cá nhân [cite: 71]</h1>
+    <div class="card bg-base-100 shadow-xl p-8">
+        <% if (message) { %>
+            <div class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-error' %> mb-4"><%= message.text %></div>
+        <% } %>
+
+        <form action="/member/profile/<%= member._id %>?_method=PUT" method="POST" class="space-y-6">
+            
+            <div class="form-control">
+                <label class="label"><span class="label-text">Email (Không thể chỉnh sửa) [cite: 11]</span></label>
+                <input type="email" value="<%= member.email %>" class="input input-bordered bg-gray-200" disabled />
+            </div>
+
+            <div class="form-control">
+                <label class="label"><span class="label-text">Tên (name) [cite: 13]</span></label>
+                <input type="text" name="name" value="<%= member.name || '' %>" class="input input-bordered" required />
+            </div>
+
+            <div class="form-control">
+                <label class="label"><span class="label-text">Năm sinh (YOB) [cite: 14]</span></label>
+                <input type="number" name="YOB" value="<%= member.YOB || '' %>" class="input input-bordered" min="1900" max="<%= new Date().getFullYear() %>" />
+            </div>
+
+            <div class="form-control">
+                <label class="label"><span class="label-text">Giới tính (gender) [cite: 15]</span></label>
+                <select name="gender" class="select select-bordered">
+                    <option value="true" <%= member.gender === true ? 'selected' : '' %>>Nam</option>
+                    <option value="false" <%= member.gender === false ? 'selected' : '' %>>Nữ</option>
+                    <option value="" <%= member.gender === undefined || member.gender === null ? 'selected' : '' %>>Chưa xác định</option>
+                </select>
+            </div>
+            
+            <div class="border-t pt-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">Đổi Mật khẩu</h3>
+                <p class="text-sm text-warning mb-4">Chỉ điền vào các trường này nếu bạn muốn đổi mật khẩu.</p>
+                
+                <div class="form-control">
+                    <label class="label"><span class="label-text">Mật khẩu mới</span></label>
+                    <input type="password" name="newPassword" placeholder="Để trống nếu không muốn đổi" class="input input-bordered" />
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text">Xác nhận Mật khẩu mới</span></label>
+                    <input type="password" name="confirmNewPassword" placeholder="Nhập lại mật khẩu mới" class="input input-bordered" />
+                </div>
+            </div>
+
+            <div class="form-control mt-8">
+                <button type="submit" class="btn btn-primary">Lưu Thay đổi</button>
+            </div>
+        </form>
+    </div>
+    <div class="text-center mt-6">
+        <p class="text-sm text-error">Lưu ý: Bạn không được phép chỉnh sửa hoặc xóa thông tin của thành viên khác, kể cả Admin[cite: 60].</p>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

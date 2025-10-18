@@ -9,7 +9,9 @@ const {
   createPerfume,
   updatePerfume,
   deletePerfume,
-} = require("../controllers/perfurmController");
+  searchPerfumes,
+  getPerfumesByBrand,
+} = require("../controllers/perfumeController");
 
 const createPerfumeSchema = require("../validations/perfume/createPerfume.schema");
 const editPerfumeSchema = require("../validations/perfume/updatePerfume.schema");
@@ -35,40 +37,6 @@ router.use("/:perfumeId/comments", commentRouter);
  *     responses:
  *       200:
  *         description: Danh sách nước hoa
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: "Danh sách nước hoa"
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         example: "66f3c52a12b4e5d4c8719a2b"
- *                       perfumeName:
- *                         type: string
- *                         example: "Dior Sauvage"
- *                       price:
- *                         type: number
- *                         example: 2500000
- *                       brand:
- *                         type: string
- *                         example: "Dior"
- *                       concentration:
- *                         type: string
- *                         example: "EDT"
- *       500:
- *         description: Lỗi server
- *
  *   post:
  *     summary: Tạo mới nước hoa (Admin only)
  *     tags: [Perfumes]
@@ -83,17 +51,57 @@ router.use("/:perfumeId/comments", commentRouter);
  *     responses:
  *       201:
  *         description: Tạo mới nước hoa thành công
- *       400:
- *         description: Dữ liệu không hợp lệ
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Chỉ admin mới được phép
  */
 router
   .route("/")
   .get(getPerfumes)
   .post(protect, admin, validate(createPerfumeSchema), createPerfume);
+
+/**
+ * @swagger
+ * /perfumes/search:
+ *   get:
+ *     summary: Tìm kiếm nước hoa theo tên, mô tả hoặc thương hiệu
+ *     tags: [Perfumes]
+ *     parameters:
+ *       - in: query
+ *         name: keyword
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Từ khóa tìm kiếm
+ *     responses:
+ *       200:
+ *         description: Kết quả tìm kiếm
+ *       400:
+ *         description: Thiếu từ khóa tìm kiếm
+ *       500:
+ *         description: Lỗi server
+ */
+router.get("/search", searchPerfumes);
+
+/**
+ * @swagger
+ * /perfumes/brand/{brandId}:
+ *   get:
+ *     summary: Lấy danh sách nước hoa theo thương hiệu
+ *     tags: [Perfumes]
+ *     parameters:
+ *       - in: path
+ *         name: brandId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của thương hiệu
+ *     responses:
+ *       200:
+ *         description: Danh sách nước hoa theo thương hiệu
+ *       400:
+ *         description: ID không hợp lệ hoặc thiếu
+ *       500:
+ *         description: Lỗi server
+ */
+router.get("/brand/:brandId", getPerfumesByBrand);
 
 /**
  * @swagger
@@ -107,13 +115,11 @@ router
  *         required: true
  *         schema:
  *           type: string
- *         description: Perfume ID
  *     responses:
  *       200:
  *         description: Chi tiết nước hoa
  *       404:
  *         description: Không tìm thấy nước hoa
- *
  *   put:
  *     summary: Cập nhật thông tin nước hoa (Admin only)
  *     tags: [Perfumes]
@@ -140,7 +146,6 @@ router
  *         description: Unauthorized
  *       403:
  *         description: Chỉ admin mới được phép
- *
  *   delete:
  *     summary: Xóa nước hoa (Admin only)
  *     tags: [Perfumes]
@@ -165,8 +170,6 @@ router
   .get(getPerfumeById)
   .put(protect, admin, validate(editPerfumeSchema), updatePerfume)
   .delete(protect, admin, deletePerfume);
-
-module.exports = router;
 
 /**
  * @swagger
@@ -213,7 +216,6 @@ module.exports = router;
  *         brand:
  *           type: string
  *           example: "66f3c52a12b4e5d4c8719a2b"
- *
  *     EditPerfume:
  *       type: object
  *       properties:
@@ -242,4 +244,5 @@ module.exports = router;
  *           type: string
  *           example: "66f3c52a12b4e5d4c8719a2b"
  */
+
 module.exports = router;
