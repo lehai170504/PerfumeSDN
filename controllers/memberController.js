@@ -44,7 +44,7 @@ const updateMemberProfile = async (req, res) => {
       if (req.headers.accept?.includes("text/html")) {
         // Nếu đến từ form EJS
         req.flash("error", "Không tìm thấy thành viên!");
-        return res.redirect("/profile");
+        return res.redirect("/member/profile");
       }
       return sendResponse(res, 404, false, "Không tìm thấy thành viên");
     }
@@ -61,7 +61,7 @@ const updateMemberProfile = async (req, res) => {
     // Nếu yêu cầu từ EJS form
     if (req.headers.accept?.includes("text/html")) {
       req.flash("success", "Cập nhật thông tin thành công!");
-      return res.redirect("/profile");
+      return res.redirect("/member/profile");
     }
 
     // Nếu là API JSON
@@ -76,7 +76,7 @@ const updateMemberProfile = async (req, res) => {
   } catch (error) {
     if (req.headers.accept?.includes("text/html")) {
       req.flash("error", "Lỗi server! Vui lòng thử lại sau.");
-      return res.redirect("/profile");
+      return res.redirect("/member/profile");
     }
     return sendResponse(res, 500, false, "Lỗi server", null, error.message);
   }
@@ -90,7 +90,7 @@ const changePassword = async (req, res) => {
     if (!member) {
       if (req.headers.accept?.includes("text/html")) {
         req.flash("error", "Không tìm thấy thành viên!");
-        return res.redirect("/profile");
+        return res.redirect("/member/profile");
       }
       return sendResponse(res, 404, false, "Không tìm thấy thành viên");
     }
@@ -99,7 +99,7 @@ const changePassword = async (req, res) => {
     if (!isMatch) {
       if (req.headers.accept?.includes("text/html")) {
         req.flash("error", "Mật khẩu hiện tại không đúng!");
-        return res.redirect("/profile");
+        return res.redirect("/member/profile");
       }
       return sendResponse(res, 400, false, "Mật khẩu hiện tại không đúng");
     }
@@ -111,14 +111,14 @@ const changePassword = async (req, res) => {
 
     if (req.headers.accept?.includes("text/html")) {
       req.flash("success", "Đổi mật khẩu thành công!");
-      return res.redirect("/profile");
+      return res.redirect("/member/profile");
     }
 
     return sendResponse(res, 200, true, "Đổi mật khẩu thành công");
   } catch (error) {
     if (req.headers.accept?.includes("text/html")) {
       req.flash("error", "Lỗi server! Vui lòng thử lại sau.");
-      return res.redirect("/profile");
+      return res.redirect("/member/profile");
     }
     return sendResponse(res, 500, false, "Lỗi server", null, error.message);
   }

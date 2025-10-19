@@ -36,7 +36,14 @@ const getPerfumeById = async (req, res) => {
   try {
     const perfume = await Perfume.findById(req.params.id)
       .populate("brand", "brandName")
-      .populate("comments.user", "name email");
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          model: "Members",
+          select: "name",
+        },
+      });
 
     if (!perfume) {
       return sendResponse(res, 404, false, "Không tìm thấy nước hoa");
@@ -55,7 +62,14 @@ const findPerfume = async (perfumeId) => {
   // Logic truy vấn phức tạp (populate)
   return await Perfume.findById(perfumeId)
     .populate("brand", "brandName")
-    .populate("comments.user", "name email");
+    .populate({
+      path: "comments",
+      populate: {
+        path: "author",
+        model: "Members",
+        select: "name",
+      },
+    });
 };
 
 // 🧠 [POST] /admin/perfumes — Tạo mới perfume (upload ảnh)

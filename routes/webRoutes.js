@@ -10,6 +10,7 @@ const PerfumeController = require("../controllers/perfumeController");
 const MemberController = require("../controllers/memberController");
 const CommentController = require("../controllers/commentController");
 const upload = require("../middleware/uploadMiddleware");
+const { message } = require("../validations/auth/register.schema");
 
 const getHome = async (req, res, next) => {
   try {
@@ -21,7 +22,7 @@ const getHome = async (req, res, next) => {
 
     res.render("index", {
       title: "Trang chủ",
-      loggedInUser: req.user || null,
+      loggedInUser: req.member,
       perfumes: perfumes,
       brands: brands,
       search: currentSearch,
@@ -36,21 +37,29 @@ const getHome = async (req, res, next) => {
 const getPerfumeDetails = async (req, res, next) => {
   try {
     const perfumeData = await PerfumeController.findPerfume(req.params.id);
-
+    const loggedInUser = req.member;
     if (!perfumeData) {
-      // Xử lý lỗi 404 bằng cách render trang 404
       return res.status(404).render("404", { title: "Không tìm thấy" });
     }
 
+    let hasCommented = false;
+
+    if (loggedInUser && perfumeData.comments) {
+      hasCommented = perfumeData.comments.some(
+        (comment) =>
+          comment.author &&
+          comment.author._id.toString() === loggedInUser._id.toString()
+      );
+    }
     res.render("detail", {
       title: perfumeData.perfumeName,
       perfume: perfumeData,
-      member: req.member,
-      loggedInUser: req.user || null,
+      loggedInUser: loggedInUser,
+      hasCommented: hasCommented,
       pageCss: null,
+      messages: null,
     });
   } catch (error) {
-    // Bắt các lỗi khác (ví dụ: lỗi kết nối DB, lỗi Mongoose,...)
     next(error);
   }
 };
@@ -89,17 +98,23 @@ router.post("/auth/login", AuthController.authMember);
 
 router.get("/auth/logout", AuthController.logoutMember);
 
-router.get("/profile", protect, async (req, res) => {
-  res.render("/auth/profile", {
+router.get("/member/profile", protect, async (req, res) => {
+  res.render("member/profile", {
     title: "Thông Tin Cá Nhân",
     member: req.member,
     messages: req.flash("success"),
+    loggedInUser: req.member || null,
+    pageCss: null,
+    message: null,
   });
 });
 
-router.post("/profile/update", protect, MemberController.updateMemberProfile);
-
-router.post("/profile/password", protect, MemberController.changePassword);
+router.put(
+  "/member/profile/:id",
+  protect,
+  MemberController.updateMemberProfile
+);
+router.put("/member/password", protect, MemberController.changePassword);
 
 router.post(
   "/perfumes/:perfumeId/comment",
@@ -114,8 +129,7 @@ router.post(
 router.get("/admin/dashboard", protect, admin, (req, res) => {
   res.render("admin/dashboard", {
     title: "Admin Dashboard",
-    member: req.member,
-    loggedInUser: req.user || null,
+    loggedInUser: req.member || null,
     pageCss: null,
   });
 });
@@ -128,9 +142,10 @@ router.get("/admin/manage_members", protect, admin, async (req, res, next) => {
     res.render("admin/manage_members", {
       title: "Quản Lý Thành Viên",
       members: membersData || [],
-      member: req.member,
-      loggedInUser: req.user || null,
+      loggedInUser: req.member || null,
       pageCss: null,
+      member: req.member,
+      messages: null,
     });
   } catch (error) {
     next(error);
@@ -144,9 +159,8 @@ router.get("/admin/manage_brands", protect, admin, async (req, res, next) => {
     res.render("admin/manage_brands", {
       title: "Quản Lý Thương Hiệu",
       brands,
-      member: req.member,
       message: null,
-      loggedInUser: req.user || null,
+      loggedInUser: req.member || null,
       pageCss: null,
     });
   } catch (error) {
@@ -158,7 +172,6 @@ router.get("/admin/manage_brands", protect, admin, async (req, res, next) => {
 router.post("/admin/brands", protect, admin, async (req, res, next) => {
   try {
     await BrandController.createBrand(req, res, next);
-    res.redirect("/admin/manage_brands");
   } catch (error) {
     next(error);
   }
@@ -168,7 +181,6 @@ router.post("/admin/brands", protect, admin, async (req, res, next) => {
 router.put("/admin/brands/:brandId", protect, admin, async (req, res, next) => {
   try {
     await BrandController.updateBrand(req, res, next);
-    res.redirect("/admin/manage_brands");
   } catch (error) {
     next(error);
   }
@@ -198,7 +210,7 @@ router.get("/admin/manage_perfumes", protect, admin, async (req, res, next) => {
       perfumes: perfumesData || [],
       brands: brands,
       member: req.member,
-      loggedInUser: req.user || null,
+      loggedInUser: req.member || null,
       pageCss: null,
       message: null,
     });
@@ -251,5 +263,27 @@ router.delete("/admin/perfumes/:id", protect, admin, async (req, res, next) => {
 
 router.get("/", getHome);
 router.get("/perfumes/:id", getPerfumeDetails);
+
+// PUT /perfumes/:perfumeId/comment/:commentId - Sửa comment
+router.put(
+  "/perfumes/:perfumeId/comment/:commentId",
+  protect,
+  CommentController.updateComment, // Controller API (cần sửa lại logic redirect trong Controller)
+  (req, res) => {
+    req.flash("success", "Đã cập nhật bình luận thành công!");
+    res.redirect(`/perfumes/${req.params.perfumeId}`);
+  }
+);
+
+// DELETE /perfumes/:perfumeId/comment/:commentId - Xóa comment
+router.delete(
+  "/perfumes/:perfumeId/comment/:commentId",
+  protect,
+  CommentController.deleteComment, // Controller API (cần sửa lại logic redirect trong Controller)
+  (req, res) => {
+    req.flash("success", "Đã xóa bình luận thành công!");
+    res.redirect(`/perfumes/${req.params.perfumeId}`);
+  }
+);
 
 module.exports = router;

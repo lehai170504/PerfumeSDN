@@ -49,13 +49,34 @@ exports.getBrandById = async (req, res, next) => {
   }
 };
 
-// CREATE BRAND (API)
+// CREATE BRAND (API & WEB)
 exports.createBrand = async (req, res, next) => {
   try {
     const brand = await Brand.create(req.body);
+
+    // 💡 Logic cho Web Route (Redirect)
+    if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+      req.session.message = {
+        type: "success",
+        text: "Tạo thương hiệu mới thành công!",
+      };
+      return res.redirect("/admin/manage_brands");
+    }
+
+    // ⚙️ Logic cho API (JSON Response)
     return sendResponse(res, 201, true, "Tạo thương hiệu thành công", brand);
   } catch (err) {
     if (err.name === "ValidationError" || err.code === 11000) {
+      // 💡 Logic cho Web Route (Error Redirect)
+      if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+        req.session.message = {
+          type: "error",
+          text: "Dữ liệu không hợp lệ hoặc Tên thương hiệu đã tồn tại.",
+        };
+        return res.redirect("/admin/manage_brands");
+      }
+
+      // ⚙️ Logic cho API (JSON Error)
       return sendResponse(
         res,
         400,
@@ -69,7 +90,7 @@ exports.createBrand = async (req, res, next) => {
   }
 };
 
-// UPDATE BRAND (API)
+// UPDATE BRAND (API & WEB)
 exports.updateBrand = async (req, res, next) => {
   try {
     const { brandId } = req.params;
@@ -79,14 +100,35 @@ exports.updateBrand = async (req, res, next) => {
       { new: true, runValidators: true }
     );
 
-    if (!brand)
+    if (!brand) {
+      // 💡 Logic cho Web Route (Error Redirect)
+      if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+        req.session.message = {
+          type: "error",
+          text: "Không tìm thấy thương hiệu để cập nhật!",
+        };
+        return res.redirect("/admin/manage_brands");
+      }
+
+      // ⚙️ Logic cho API (JSON Error)
       return sendResponse(
         res,
         404,
         false,
         "Không tìm thấy thương hiệu để cập nhật"
       );
+    }
 
+    // 💡 Logic cho Web Route (Redirect)
+    if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+      req.session.message = {
+        type: "success",
+        text: "Cập nhật thương hiệu thành công!",
+      };
+      return res.redirect("/admin/manage_brands");
+    }
+
+    // ⚙️ Logic cho API (JSON Response)
     return sendResponse(
       res,
       200,
@@ -95,29 +137,34 @@ exports.updateBrand = async (req, res, next) => {
       brand
     );
   } catch (err) {
-    if (err.name === "ValidationError" || err.code === 11000) {
-      return sendResponse(
-        res,
-        400,
-        false,
-        "Dữ liệu không hợp lệ",
-        null,
-        err.message
-      );
-    }
     next(err);
   }
 };
 
-// DELETE BRAND (API)
+// DELETE BRAND (API & WEB)
 exports.deleteBrand = async (req, res, next) => {
   try {
     const { brandId } = req.params;
     const brand = await Brand.findByIdAndDelete(brandId);
 
-    if (!brand)
+    if (!brand) {
+      if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+        req.session.message = {
+          type: "error",
+          text: "Không tìm thấy thương hiệu để xóa.",
+        };
+        return res.redirect("/admin/manage_brands");
+      }
       return sendResponse(res, 404, false, "Không tìm thấy thương hiệu để xóa");
+    }
 
+    if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+      req.session.message = {
+        type: "success",
+        text: "Xóa thương hiệu thành công!",
+      };
+      return res.redirect("/admin/manage_brands");
+    }
     return sendResponse(
       res,
       200,
@@ -126,92 +173,5 @@ exports.deleteBrand = async (req, res, next) => {
     );
   } catch (err) {
     next(err);
-  }
-};
-
-/* ===================================================
- * 🧩 EJS ADMIN CONTROLLERS — có redirect + flash message
- * =================================================== */
-
-// [POST] /admin/brands
-exports.createBrandWeb = async (req, res, next) => {
-  try {
-    const { brandName } = req.body;
-    if (!brandName || brandName.trim() === "") {
-      req.session.message = {
-        type: "error",
-        text: "Tên thương hiệu không được để trống!",
-      };
-      return res.redirect("/admin/manage_brands");
-    }
-
-    await Brand.create({ brandName });
-    console.log("✅ Tạo thương hiệu:", brandName);
-
-    req.session.message = {
-      type: "success",
-      text: "Tạo thương hiệu mới thành công!",
-    };
-    return res.redirect("/admin/manage_brands");
-  } catch (error) {
-    console.error("❌ Lỗi khi tạo thương hiệu:", error);
-    req.session.message = {
-      type: "error",
-      text: "Đã xảy ra lỗi khi tạo thương hiệu.",
-    };
-    next(error);
-  }
-};
-
-// [PUT] /admin/brands/:id
-exports.updateBrandWeb = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const { brandName } = req.body;
-
-    const brand = await Brand.findById(id);
-    if (!brand) {
-      req.session.message = {
-        type: "error",
-        text: "Không tìm thấy thương hiệu để cập nhật!",
-      };
-      return res.redirect("/admin/manage_brands");
-    }
-
-    brand.brandName = brandName;
-    await brand.save();
-
-    console.log("✅ Cập nhật thương hiệu:", brandName);
-    req.session.message = {
-      type: "success",
-      text: "Cập nhật thương hiệu thành công!",
-    };
-    return res.redirect("/admin/manage_brands");
-  } catch (error) {
-    console.error("❌ Lỗi khi cập nhật thương hiệu:", error);
-    req.session.message = {
-      type: "error",
-      text: "Lỗi trong quá trình cập nhật thương hiệu.",
-    };
-    next(error);
-  }
-};
-
-// [DELETE] /admin/brands/:id
-exports.deleteBrandWeb = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await Brand.findByIdAndDelete(id);
-
-    console.log("🗑️ Đã xóa thương hiệu:", id);
-    req.session.message = {
-      type: "success",
-      text: "Xóa thương hiệu thành công!",
-    };
-    return res.redirect("/admin/manage_brands");
-  } catch (error) {
-    console.error("❌ Lỗi khi xóa thương hiệu:", error);
-    req.session.message = { type: "error", text: "Không thể xóa thương hiệu." };
-    next(error);
   }
 };

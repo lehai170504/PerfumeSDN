@@ -1,22 +1,23 @@
 // File: ../controllers/commentController.js
 
 const Perfume = require("../models/Perfume");
-const sendResponse = require("../middleware/responseHandler"); // Hàm tiện ích
+const Comment = require("../models/Comment");
+const sendResponse = require("../middleware/responseHandler");
 
 const checkSingleFeedback = async (req, res, next) => {
   try {
+    // 1. Tìm Perfume để đảm bảo nó tồn tại
     const perfume = await Perfume.findById(req.params.perfumeId);
     if (!perfume) {
       return sendResponse(res, 404, false, "Perfume not found");
     }
 
-    // Tìm comment có author là ID của người dùng hiện tại (req.member._id)
-    const existingComment = perfume.comments.find(
-      (comment) => comment.author.toString() === req.member._id.toString()
-    );
+    const existingComment = await Comment.findOne({
+      author: req.member._id,
+      _id: { $in: perfume.comments },
+    });
 
     if (existingComment) {
-      // Nếu đã tìm thấy comment, cấm gửi thêm
       return sendResponse(
         res,
         403,
@@ -25,9 +26,8 @@ const checkSingleFeedback = async (req, res, next) => {
       );
     }
 
-    // Gắn perfume vào req để tránh tìm kiếm lại
     req.perfume = perfume;
-    next(); // Cho phép tiếp tục nếu chưa có comment
+    next();
   } catch (err) {
     next(err);
   }
@@ -37,7 +37,6 @@ const checkSingleFeedback = async (req, res, next) => {
 
 // POST /perfumes/:perfumeId/comments - Gửi comment mới (Member Only)
 exports.postComment = [
-  // checkSingleFeedback được chạy sau middleware 'protect'
   checkSingleFeedback,
   async (req, res, next) => {
     try {
@@ -45,29 +44,29 @@ exports.postComment = [
 
       // Kiểm tra và validate dữ liệu
       if (!req.body.rating || req.body.rating < 1 || req.body.rating > 3) {
-        return sendResponse(res, 400, false, "Rating must be between 1 and 3."); // Theo commentSchema: min: 1, max: 3 [cite: 38]
+        return sendResponse(res, 400, false, "Rating must be between 1 and 3.");
       }
       if (!req.body.content) {
         return sendResponse(res, 400, false, "Comment content is required.");
       }
 
-      const newComment = {
+      const newComment = new Comment({
         rating: req.body.rating,
         content: req.body.content,
-        author: req.member._id, // ID Member từ middleware protect
-      };
+        author: req.member._id,
+      });
 
-      perfume.comments.push(newComment);
+      const savedComment = await newComment.save();
+      perfume.comments.push(savedComment._id);
       await perfume.save();
 
-      const createdComment = perfume.comments[perfume.comments.length - 1];
-
+      // Trả về comment đã tạo
       return sendResponse(
         res,
         201,
         true,
         "Comment posted successfully",
-        createdComment
+        savedComment
       );
     } catch (err) {
       next(err);
@@ -75,33 +74,59 @@ exports.postComment = [
   },
 ];
 
-// PUT /perfumes/:perfumeId/comments/:commentId - Chỉnh sửa comment của chính mình (Author Only)
+// PUT /perfumes/:perfumeId/comments/:commentId - Chỉnh sửa comment của chính mình
+// UPDATE comment
 exports.updateComment = async (req, res, next) => {
   try {
-    const perfume = await Perfume.findById(req.params.perfumeId);
-    if (!perfume) {
-      return sendResponse(res, 404, false, "Perfume not found");
-    }
+    const { perfumeId, commentId } = req.params;
 
-    const comment = perfume.comments.id(req.params.commentId);
+    const comment = await Comment.findOne({
+      _id: commentId,
+      author: req.member._id,
+    });
+
     if (!comment) {
-      return sendResponse(res, 404, false, "Comment not found");
+      if (req.headers.accept?.includes("json")) {
+        return sendResponse(
+          res,
+          404,
+          false,
+          "Comment not found or access denied."
+        );
+      } else {
+        req.flash("error", "Comment not found or access denied.");
+        return res.redirect(`/perfumes/${perfumeId}`);
+      }
     }
 
-    // Kiểm tra quyền: Chỉ tác giả mới được chỉnh sửa
-    if (comment.author.toString() !== req.member._id.toString()) {
-      return sendResponse(
-        res,
-        403,
-        false,
-        "Forbidden: You can only edit your own comments."
-      );
+    const perfume = await Perfume.findById(perfumeId);
+    if (!perfume || !perfume.comments.includes(commentId)) {
+      if (req.headers.accept?.includes("json")) {
+        return sendResponse(
+          res,
+          404,
+          false,
+          "Comment not linked to this perfume."
+        );
+      } else {
+        req.flash("error", "Comment not linked to this perfume.");
+        return res.redirect(`/perfumes/${perfumeId}`);
+      }
     }
 
-    // Cập nhật thông tin
     if (req.body.rating !== undefined) {
       if (req.body.rating < 1 || req.body.rating > 3) {
-        return sendResponse(res, 400, false, "Rating must be between 1 and 3.");
+        if (req.headers.accept?.includes("json")) {
+          return sendResponse(
+            res,
+            400,
+            false,
+            "Rating must be between 1 and 3."
+          );
+        } else {
+          req.flash("error", "Rating must be between 1 and 3.");
+          return res.redirect(`/perfumes/${perfumeId}`);
+        }
       }
       comment.rating = req.body.rating;
     }
@@ -109,47 +134,61 @@ exports.updateComment = async (req, res, next) => {
       comment.content = req.body.content;
     }
 
-    await perfume.save();
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Comment updated successfully",
-      comment
-    );
+    await comment.save();
+
+    if (req.headers.accept?.includes("json")) {
+      return sendResponse(
+        res,
+        200,
+        true,
+        "Comment updated successfully",
+        comment
+      );
+    } else {
+      req.flash("success", "Comment updated successfully");
+      return res.redirect(`/perfumes/${perfumeId}#feedback-section`);
+    }
   } catch (err) {
     next(err);
   }
 };
 
-// DELETE /perfumes/:perfumeId/comments/:commentId - Xóa comment của chính mình (Author Only)
+// DELETE comment
 exports.deleteComment = async (req, res, next) => {
   try {
-    const perfume = await Perfume.findById(req.params.perfumeId);
-    if (!perfume) {
-      return sendResponse(res, 404, false, "Perfume not found");
+    const { perfumeId, commentId } = req.params;
+
+    const deletedComment = await Comment.findOneAndDelete({
+      _id: commentId,
+      author: req.member._id,
+    });
+
+    if (!deletedComment) {
+      if (req.headers.accept?.includes("json")) {
+        return sendResponse(
+          res,
+          404,
+          false,
+          "Comment not found or access denied."
+        );
+      } else {
+        req.flash("error", "Comment not found or access denied.");
+        return res.redirect(`/perfumes/${perfumeId}`);
+      }
     }
 
-    const comment = perfume.comments.id(req.params.commentId);
-    if (!comment) {
-      return sendResponse(res, 404, false, "Comment not found");
+    const perfume = await Perfume.findById(perfumeId);
+    if (perfume) {
+      perfume.comments.pull(commentId);
+      await perfume.save();
     }
 
-    // Kiểm tra quyền: Chỉ tác giả mới được xóa
-    if (comment.author.toString() !== req.member._id.toString()) {
-      return sendResponse(
-        res,
-        403,
-        false,
-        "Forbidden: You can only delete your own comments."
-      );
+    if (req.headers.accept?.includes("json")) {
+      return sendResponse(res, 200, true, "Comment deleted successfully");
+    } else {
+      req.flash("success", "Comment deleted successfully");
+      return res.redirect(`/perfumes/${perfumeId}#feedback-section`);
     }
-
-    // Xóa sub-document và lưu
-    comment.remove();
-    await perfume.save();
-
-    return sendResponse(res, 200, true, "Comment deleted successfully");
   } catch (err) {
     next(err);
   }

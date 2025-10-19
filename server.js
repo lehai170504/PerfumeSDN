@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const methodOverride = require("method-override");
 const flash = require("connect-flash");
 const session = require("express-session");
+const checkUser = require("./middleware/userLoader");
 
 // --- API Routes ---
 const authRoutes = require("./routes/auth");
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(cookieParser());
+app.use(checkUser);
 
 // --- 2. Cấu hình EJS View Engine và Static Files ---
 app.set("view engine", "ejs");
