@@ -1,0 +1,140 @@
+/* ==== TỔNG THỂ ==== */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 100px);
+  background: linear-gradient(135deg, #f9f5ff, #f3f4f6);
+  padding: 40px 20px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ==== KHỐI CHÍNH ==== */
+.login-hero {
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+.hero-text h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #9333ea;
+  margin-bottom: 8px;
+}
+
+.hero-text p {
+  color: #4b5563;
+  font-size: 1rem;
+  margin-bottom: 25px;
+}
+
+/* ==== FORM CARD ==== */
+.login-card {
+  background: #ffffff;
+  padding: 32px 28px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ==== THÔNG BÁO LỖI ==== */
+.alert-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #b91c1c;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+/* ==== FORM GROUP ==== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+  border-color: #9333ea;
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.2);
+  outline: none;
+}
+
+/* ==== NÚT ĐĂNG NHẬP ==== */
+.btn-login {
+  background-color: #9333ea;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.1s ease;
+}
+
+.btn-login:hover {
+  background-color: #7e22ce;
+  transform: translateY(-1px);
+}
+
+.btn-login:active {
+  transform: translateY(1px);
+}
+
+/* ==== LINK ĐĂNG KÝ ==== */
+.register-link {
+  margin-top: 14px;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.register-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.register-link a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 26px 22px;
+  }
+
+  .hero-text h1 {
+    font-size: 1.7rem;
+  }
+}

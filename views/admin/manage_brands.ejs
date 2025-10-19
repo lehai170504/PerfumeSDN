@@ -1,61 +1,52 @@
 <%- include('../partials/header', { title: 'Quản lý Thương hiệu', user:
 loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
 
-<div class="container mx-auto">
-  <h1 class="text-4xl font-bold mb-8 text-primary border-b pb-2">
-    Quản lý Thương hiệu (Brands)
-  </h1>
+<link rel="stylesheet" href="/css/manage-brands.css" />
 
-  <div class="flex justify-end mb-6">
-    <button class="btn btn-secondary" onclick="add_brand_modal.showModal()">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      Thêm Thương hiệu Mới
+<div class="brands-container">
+  <h1 class="page-title">Quản lý Thương hiệu (Brands)</h1>
+
+  <div class="action-bar">
+    <button class="btn btn-secondary" onclick="openAddModal()">
+      ➕ Thêm Thương hiệu Mới
     </button>
   </div>
 
   <% if (message) { %>
   <div
-    role="alert"
-    class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-error' %> mb-4"
+    class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-error' %>"
   >
-    <span><%= message.text %></span>
+    <%= message.text %>
   </div>
   <% } %>
 
-  <div class="overflow-x-auto bg-base-100 p-6 rounded-lg shadow-xl">
-    <table class="table w-full">
+  <div class="table-wrapper">
+    <table class="brand-table">
       <thead>
         <tr>
           <th>STT</th>
           <th>ID Thương hiệu</th>
-          <th>Tên Thương hiệu (brandName)</th>
+          <th>Tên Thương hiệu</th>
           <th>Ngày Tạo</th>
           <th>Hành động</th>
         </tr>
       </thead>
       <tbody>
-        <% brands.forEach((brand, index) => { %>
-        <tr class="hover">
-          <th><%= index + 1 %></th>
-          <td class="font-mono text-sm"><%= brand._id %></td>
-          <td class="font-bold"><%= brand.brandName %></td>
+        <% if (brands.length === 0) { %>
+        <tr>
+          <td colspan="5" class="text-center">
+            Chưa có thương hiệu nào được tạo.
+          </td>
+        </tr>
+        <% } else { %> <% brands.forEach((brand, index) => { %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td class="mono"><%= brand._id %></td>
+          <td><%= brand.brandName %></td>
           <td><%= new Date(brand.createdAt).toLocaleDateString('vi-VN') %></td>
-          <td class="flex gap-2">
+          <td>
             <button
-              class="btn btn-xs btn-warning"
+              class="btn btn-warning btn-xs"
               onclick="editBrand('<%= brand._id %>', '<%= brand.brandName %>')"
             >
               Sửa
@@ -64,117 +55,90 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
               action="/admin/brands/<%= brand._id %>?_method=DELETE"
               method="POST"
               onsubmit="return confirm('Bạn có chắc chắn muốn xóa thương hiệu <%= brand.brandName %>?');"
+              class="inline"
             >
-              <button type="submit" class="btn btn-xs btn-error">Xóa</button>
+              <button type="submit" class="btn btn-danger btn-xs">Xóa</button>
             </form>
           </td>
         </tr>
-        <% }) %> <% if (brands.length === 0) { %>
-        <tr>
-          <td colspan="5" class="text-center text-gray-500">
-            Chưa có thương hiệu nào được tạo.
-          </td>
-        </tr>
-        <% } %>
+        <% }) %> <% } %>
       </tbody>
     </table>
   </div>
 
-  <div role="alert" class="alert alert-warning mt-6">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="stroke-current shrink-0 h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-      />
-    </svg>
-    >
+  <div class="alert alert-warning mt-6">
+    ⚠️ Cẩn thận khi chỉnh sửa hoặc xóa thương hiệu — thao tác này ảnh hưởng đến
+    sản phẩm liên quan.
   </div>
 </div>
 
-<dialog id="add_brand_modal" class="modal">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg text-primary">Thêm Thương hiệu Mới</h3>
-    <form action="/admin/brands" method="POST" class="py-4 space-y-4">
-      <div class="form-control">
-        <label class="label"
-          ><span class="label-text">Tên Thương hiệu (brandName)</span></label
-        >
-        <input
-          type="text"
-          name="brandName"
-          placeholder="Ví dụ: Chanel, Dior, Gucci..."
-          class="input input-bordered"
-          required
-        />
-      </div>
-      <div class="modal-action">
+<!-- Modal Thêm -->
+<div id="addModal" class="modal">
+  <div class="modal-content">
+    <h3>Thêm Thương hiệu Mới</h3>
+    <form action="/admin/brands" method="POST">
+      <label for="brandName">Tên Thương hiệu</label>
+      <input
+        type="text"
+        name="brandName"
+        id="brandName"
+        placeholder="VD: Chanel, Dior..."
+        required
+      />
+      <div class="modal-actions">
         <button type="submit" class="btn btn-primary">Lưu</button>
-        <button type="button" class="btn" onclick="add_brand_modal.close()">
-          Hủy
-        </button>
+        <button type="button" class="btn" onclick="closeAddModal()">Hủy</button>
       </div>
     </form>
   </div>
-</dialog>
+</div>
 
-<dialog id="edit_brand_modal" class="modal">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg text-warning">Chỉnh Sửa Thương hiệu</h3>
-    <form id="editBrandForm" action="" method="POST" class="py-4 space-y-4">
+<!-- Modal Chỉnh sửa -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h3>Chỉnh Sửa Thương hiệu</h3>
+    <form id="editBrandForm" action="" method="POST">
       <input type="hidden" name="_method" value="PUT" />
-      <div class="form-control">
-        <label class="label"><span class="label-text">ID:</span></label>
-        <input
-          type="text"
-          id="editBrandIdDisplay"
-          class="input input-bordered bg-gray-200"
-          disabled
-        />
-      </div>
-      <div class="form-control">
-        <label class="label"
-          ><span class="label-text">Tên Thương hiệu Mới</span></label
-        >
-        <input
-          type="text"
-          id="editBrandNameInput"
-          name="brandName"
-          class="input input-bordered"
-          required
-        />
-      </div>
-      <div class="modal-action">
+      <label>ID Thương hiệu</label>
+      <input type="text" id="editBrandIdDisplay" disabled />
+      <label>Tên Thương hiệu Mới</label>
+      <input type="text" id="editBrandNameInput" name="brandName" required />
+      <div class="modal-actions">
         <button type="submit" class="btn btn-warning">Cập nhật</button>
-        <button type="button" class="btn" onclick="edit_brand_modal.close()">
+        <button type="button" class="btn" onclick="closeEditModal()">
           Hủy
         </button>
       </div>
     </form>
   </div>
-</dialog>
+</div>
 
 <script>
-  // Hàm này được gọi khi nhấn nút "Sửa"
-  function editBrand(id, name) {
-    // 1. Cập nhật URL action của form
-    const form = document.getElementById("editBrandForm");
-    // Action sẽ trỏ đến endpoint PUT: /admin/brands/:brandId
-    form.action = `/admin/brands/${id}?_method=PUT`;
+  function openAddModal() {
+    document.getElementById("addModal").style.display = "flex";
+  }
+  function closeAddModal() {
+    document.getElementById("addModal").style.display = "none";
+  }
 
-    // 2. Điền dữ liệu cũ vào input
+  function editBrand(id, name) {
+    const form = document.getElementById("editBrandForm");
+    form.action = `/admin/brands/${id}?_method=PUT`;
     document.getElementById("editBrandIdDisplay").value = id;
     document.getElementById("editBrandNameInput").value = name;
-
-    // 3. Hiển thị modal
-    document.getElementById("edit_brand_modal").showModal();
+    document.getElementById("editModal").style.display = "flex";
   }
+  function closeEditModal() {
+    document.getElementById("editModal").style.display = "none";
+  }
+
+  // Đóng modal khi click ra ngoài
+  window.onclick = function (e) {
+    const add = document.getElementById("addModal");
+    const edit = document.getElementById("editModal");
+    if (e.target === add) add.style.display = "none";
+    if (e.target === edit) edit.style.display = "none";
+  };
 </script>
 
 <%- include('../partials/footer') %>

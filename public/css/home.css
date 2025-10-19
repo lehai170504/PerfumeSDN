@@ -1,0 +1,446 @@
+/* ======= BỐ CỤC CHUNG ======= */
+.home-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  font-family: "Inter", "Segoe UI", -apple-system, sans-serif;
+  background: linear-gradient(135deg, #fdfbfb 0%, #fef5f1 100%);
+  min-height: 100vh;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #d8a7b1 0%, #b34da5 50%, #972d88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 50px;
+  letter-spacing: -0.5px;
+  position: relative;
+  animation: fadeInDown 0.8s ease;
+}
+
+.page-title::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #b34da5, transparent);
+  border-radius: 2px;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======= FORM TÌM KIẾM ======= */
+.search-box {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(179, 77, 165, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 28px 32px;
+  margin-bottom: 48px;
+  border: 1px solid rgba(179, 77, 165, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.search-box:hover {
+  box-shadow: 0 12px 48px rgba(179, 77, 165, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.search-form input,
+.search-form select {
+  flex: 1;
+  min-width: 200px;
+  padding: 14px 18px;
+  border: 2px solid #f0e6ee;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: #fafafa;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #333;
+}
+
+.search-form input:focus,
+.search-form select:focus {
+  outline: none;
+  border-color: #b34da5;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(179, 77, 165, 0.1);
+  transform: translateY(-1px);
+}
+
+.search-form input::placeholder {
+  color: #aaa;
+  font-weight: 400;
+}
+
+.search-form button {
+  background: linear-gradient(135deg, #d8a7b1 0%, #b34da5 100%);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(179, 77, 165, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.search-form button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.search-form button:hover::before {
+  left: 100%;
+}
+
+.search-form button:hover {
+  background: linear-gradient(135deg, #c58b9b 0%, #972d88 100%);
+  box-shadow: 0 6px 20px rgba(179, 77, 165, 0.3);
+  transform: translateY(-2px);
+}
+
+.search-form button:active {
+  transform: translateY(0);
+}
+
+/* ======= GRID SẢN PHẨM ======= */
+.perfume-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+  animation: fadeIn 1s ease 0.4s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ======= THẺ NƯỚC HOA ======= */
+.perfume-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(179, 77, 165, 0.06);
+  position: relative;
+}
+
+.perfume-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #d8a7b1, #b34da5, #972d88);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.perfume-card:hover::before {
+  opacity: 1;
+}
+
+.perfume-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(179, 77, 165, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: rgba(179, 77, 165, 0.15);
+}
+
+.image-wrapper {
+  height: 360px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #fef5f1 0%, #fdfbfb 100%);
+}
+
+.image-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 100%);
+  pointer-events: none;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.perfume-card:hover img {
+  transform: scale(1.08);
+}
+
+/* ======= NỘI DUNG ======= */
+.card-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  gap: 12px;
+}
+
+.card-content h2 {
+  font-size: 1.5rem;
+  color: #2d2d2d;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+
+.badge {
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.card-content p {
+  color: #666;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+
+.card-content p strong {
+  color: #b34da5;
+  font-weight: 600;
+}
+
+.btn-detail {
+  background: linear-gradient(135deg, #d8a7b1 0%, #b34da5 100%);
+  color: white;
+  text-align: center;
+  padding: 13px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: auto;
+  box-shadow: 0 4px 12px rgba(179, 77, 165, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-detail::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-detail:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-detail:hover {
+  background: linear-gradient(135deg, #c58b9b 0%, #972d88 100%);
+  box-shadow: 0 6px 20px rgba(179, 77, 165, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-detail:active {
+  transform: translateY(0);
+}
+
+/* ======= TRẠNG THÁI RỖNG ======= */
+.no-result {
+  grid-column: 1 / -1;
+  text-align: center;
+  background: linear-gradient(135deg, #fef5f1 0%, #fdfbfb 100%);
+  padding: 60px 40px;
+  border-radius: 16px;
+  color: #888;
+  font-style: italic;
+  font-size: 1.1rem;
+  border: 2px dashed #e0e0e0;
+  animation: fadeIn 0.8s ease;
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 1024px) {
+  .perfume-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 40px 16px;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 36px;
+  }
+
+  .search-box {
+    padding: 20px 18px;
+    margin-bottom: 36px;
+  }
+
+  .search-form {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .search-form input,
+  .search-form select {
+    min-width: 100%;
+  }
+
+  .search-form button {
+    width: 100%;
+    padding: 14px 20px;
+  }
+
+  .perfume-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+  }
+
+  .image-wrapper {
+    height: 300px;
+  }
+
+  .card-content h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.8rem;
+  }
+
+  .perfume-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .card-content {
+    padding: 18px;
+  }
+}
+
+/* ======= SCROLL ANIMATIONS ======= */
+@media (prefers-reduced-motion: no-preference) {
+  .perfume-card {
+    animation: cardFadeIn 0.6s ease both;
+  }
+
+  .perfume-card:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .perfume-card:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .perfume-card:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .perfume-card:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  .perfume-card:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+  .perfume-card:nth-child(6) {
+    animation-delay: 0.6s;
+  }
+
+  @keyframes cardFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

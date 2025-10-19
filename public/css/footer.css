@@ -1,0 +1,94 @@
+/* ==== FOOTER CHUNG ==== */
+.footer {
+  background-color: #333;
+  color: #f2f2f2;
+  padding: 40px 20px;
+  margin-top: auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ==== CONTAINER ==== */
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* ==== CỘT TRÁI ==== */
+.footer-left {
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-brand {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #f8b7b7; /* tone hồng nhẹ kiểu “Perfume Bliss” */
+  margin-bottom: 8px;
+}
+
+.footer-desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #ccc;
+  margin-bottom: 12px;
+}
+
+/* ==== CỘT PHẢI ==== */
+.footer-links {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-links h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #fff;
+  border-bottom: 2px solid #f8b7b7;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.footer-links a {
+  display: block;
+  color: #ddd;
+  text-decoration: none;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #f8b7b7;
+}
+
+/* ==== DÒNG BẢN QUYỀN ==== */
+.footer-bottom {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-top: 30px;
+  border-top: 1px solid #555;
+  padding-top: 15px;
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-links {
+    margin-top: 20px;
+  }
+
+  .footer-bottom {
+    margin-top: 25px;
+  }
+}

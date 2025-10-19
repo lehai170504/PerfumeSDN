@@ -1,63 +1,47 @@
-<%- include('../partials/header', { title: 'Đăng nhập', user: null }) %> <%-
-include('../partials/navbar', { user: null }) %>
+<%- include('../partials/header', { title: 'Đăng nhập', user: null, pageCss:
+'login.css' }) %> <%- include('../partials/navbar', { user: null }) %>
 
-<div class="hero min-h-screen bg-base-200 -mt-24 pt-24">
-  <div class="hero-content flex-col">
-    <div class="text-center">
-      <h1 class="text-5xl font-bold text-secondary">Chào mừng trở lại!</h1>
-      <p class="py-6">Đăng nhập để quản lý hồ sơ và gửi phản hồi</p>
+<main class="login-page">
+  <section class="login-hero">
+    <div class="hero-text">
+      <h1>Chào mừng trở lại!</h1>
+      <p>Đăng nhập để quản lý hồ sơ và gửi phản hồi</p>
     </div>
-    <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-      <form action="/auth/login" method="POST" class="card-body">
+
+    <div class="login-card">
+      <form action="/auth/login" method="POST">
         <% if (error) { %>
-        <div role="alert" class="alert alert-error mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span><%= error %></span>
-        </div>
+        <div class="alert-error"><%= error %></div>
         <% } %>
-        <div class="form-control">
-          <label class="label"><span class="label-text">Email</span></label>
+
+        <div class="form-group">
+          <label>Email</label>
           <input
             type="email"
-            placeholder="Email đăng nhập"
             name="email"
-            class="input input-bordered"
+            placeholder="Email đăng nhập"
             required
           />
         </div>
-        <div class="form-control">
-          <label class="label"><span class="label-text">Mật khẩu</span></label>
+
+        <div class="form-group">
+          <label>Mật khẩu</label>
           <input
             type="password"
-            placeholder="Mật khẩu"
             name="password"
-            class="input input-bordered"
+            placeholder="Mật khẩu"
             required
           />
         </div>
-        <div class="form-control mt-6">
-          <button type="submit" class="btn btn-secondary">Đăng nhập</button>
-        </div>
-        <div class="text-center mt-4">
-          <a href="/auth/register" class="link link-hover text-primary"
-            >Đăng ký tài khoản mới</a
-          >
-        </div>
+
+        <button type="submit" class="btn-login">Đăng nhập</button>
+
+        <p class="register-link">
+          <a href="/auth/register">Đăng ký tài khoản mới</a>
+        </p>
       </form>
     </div>
-  </div>
-</div>
+  </section>
+</main>
 
 <%- include('../partials/footer') %>

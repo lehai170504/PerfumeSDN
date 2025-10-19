@@ -1,73 +1,54 @@
 <%- include('../partials/header', { title: 'Admin Dashboard', user: loggedInUser
 }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
 
-<div class="container mx-auto">
-  <h1 class="text-4xl font-bold mb-8 text-secondary">
+<link rel="stylesheet" href="/css/admin-dashboard.css" />
+
+<div class="dashboard-container">
+  <h1 class="page-title">
     Chào mừng, Admin <%= loggedInUser ? loggedInUser.name : 'Quản trị viên' %>!
   </h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-    <div
-      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
-    >
+  <div class="card-grid">
+    <div class="card">
       <div class="card-body">
-        <h2 class="card-title text-primary">Quản lý Nước hoa</h2>
-        <div class="card-actions justify-end">
+        <h2 class="card-title">Quản lý Nước hoa</h2>
+        <div class="card-actions">
           <a href="/admin/manage_perfumes" class="btn btn-primary">Xem</a>
         </div>
       </div>
     </div>
 
-    <div
-      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
-    >
+    <div class="card">
       <div class="card-body">
-        <h2 class="card-title text-primary">Quản lý Thương hiệu</h2>
-        <div class="card-actions justify-end">
+        <h2 class="card-title">Quản lý Thương hiệu</h2>
+        <div class="card-actions">
           <a href="/admin/manage_brands" class="btn btn-primary">Xem</a>
         </div>
       </div>
     </div>
 
-    <div
-      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
-    >
+    <div class="card">
       <div class="card-body">
-        <h2 class="card-title text-primary">Quản lý Thành viên</h2>
-        <div class="card-actions justify-end">
+        <h2 class="card-title">Quản lý Thành viên</h2>
+        <div class="card-actions">
           <a href="/admin/manage_members" class="btn btn-primary">Xem</a>
         </div>
       </div>
     </div>
 
-    <div
-      class="card bg-white shadow-xl hover:shadow-2xl transition duration-300"
-    >
+    <div class="card">
       <div class="card-body">
-        <h2 class="card-title text-primary">Thống kê</h2>
+        <h2 class="card-title">Thống kê</h2>
         <p>Tổng số thành viên, nước hoa, và thương hiệu.</p>
-        <div class="card-actions justify-end">
-          <button class="btn btn-ghost">Chi tiết</button>
+        <div class="card-actions">
+          <button class="btn btn-outline">Chi tiết</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div role="alert" class="alert alert-warning">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="stroke-current shrink-0 h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-      />
-    </svg>
-    >
+  <div class="alert alert-warning">
+    ⚠️ Đây là khu vực quản trị, vui lòng thao tác cẩn thận.
   </div>
 </div>
 

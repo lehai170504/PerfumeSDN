@@ -32,9 +32,6 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "daisyui": "^5.3.7",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.7"
+    "autoprefixer": "^10.4.21"
   }
 }

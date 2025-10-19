@@ -1,148 +1,72 @@
 <%- include('../partials/header', { title: 'Quản lý Thành viên', user:
 loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
 
-<div class="container mx-auto p-4 sm:p-6 lg:p-8">
-  <h1 class="text-3xl font-bold mb-8 text-primary">
-    Danh sách Thành viên (Collectors)
-  </h1>
+<div class="container">
+  <h1 class="page-title">Danh sách Thành viên (Collectors)</h1>
 
   <% if (messages && messages.length > 0) { %> <% messages.forEach(msg => { %>
   <div
-    role="alert"
-    class="alert <%= msg.type === 'success' ? 'alert-success' : 'alert-error' %> mb-4"
+    class="alert <%= msg.type === 'success' ? 'alert-success' : 'alert-error' %>"
   >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="stroke-current shrink-0 h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
     <span><%= msg.text %></span>
   </div>
   <% }) %> <% } %> <% if (member.isAdmin) { %>
-  <button id="openModalBtn" class="btn btn-primary mb-6">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="2"
-      stroke="currentColor"
-      class="w-5 h-5 mr-2"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-4.5 9h-3m0 0v-3m0 3v-3m0 3h3m0-3h3"
-      />
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M19.5 10.5c-1.25 0-2.5-1.5-2.5-2.5S17.25 5.5 19.5 5.5s2.5 1.5 2.5 2.5-1.25 2.5-2.5 2.5zM4.5 16.5c-1.25 0-2.5 1.5-2.5 2.5s1.25 2.5 2.5 2.5 2.5-1.5 2.5-2.5-1.25-2.5-2.5-2.5z"
-      />
-    </svg>
-    Thêm thành viên mới
+  <button id="openModalBtn" class="btn btn-primary">
+    + Thêm thành viên mới
   </button>
 
-  <div
-    id="addMemberModal"
-    class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-4"
-  >
-    <div class="bg-white rounded-xl w-full max-w-lg shadow-2xl relative p-8">
-      <h2 class="text-2xl font-extrabold text-center text-primary mb-6">
-        Đăng Ký Thành Viên Mới
-      </h2>
-      <form action="/auth/register" method="POST" class="space-y-4">
-        <div class="form-control">
-          <label class="label"
-            ><span class="label-text font-semibold">Email</span></label
-          >
-          <input
-            type="email"
-            name="email"
-            placeholder="Nhập email"
-            class="input input-bordered w-full"
-            required
-          />
+  <div id="addMemberModal" class="modal">
+    <div class="modal-content">
+      <h2 class="modal-title">Đăng Ký Thành Viên Mới</h2>
+      <form action="/auth/register" method="POST" class="form">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="Nhập email" required />
         </div>
 
-        <div class="form-control">
-          <label class="label"
-            ><span class="label-text font-semibold">Tên thành viên</span></label
-          >
+        <div class="form-group">
+          <label>Tên thành viên</label>
           <input
             type="text"
             name="membername"
             placeholder="Nhập tên"
-            class="input input-bordered w-full"
             required
           />
         </div>
 
-        <div class="form-control">
-          <label class="label"
-            ><span class="label-text font-semibold">Mật khẩu</span></label
-          >
+        <div class="form-group">
+          <label>Mật khẩu</label>
           <input
             type="password"
             name="password"
             placeholder="Đặt mật khẩu"
-            class="input input-bordered w-full"
             required
           />
         </div>
 
-        <div class="form-control">
-          <label class="label"
-            ><span class="label-text font-semibold">Role</span></label
-          >
-          <select name="isAdmin" class="select select-bordered w-full">
+        <div class="form-group">
+          <label>Role</label>
+          <select name="isAdmin">
             <option value="false" selected>Member (Thành viên)</option>
             <option value="true">Admin (Quản trị viên)</option>
           </select>
         </div>
 
-        <div class="flex justify-between pt-4">
-          <button
-            type="button"
-            id="closeModalBtn"
-            class="btn btn-outline btn-error"
-          >
-            Hủy bỏ
+        <div class="form-actions">
+          <button type="button" id="closeModalBtn" class="btn btn-cancel">
+            Hủy
           </button>
-          <button type="submit" class="btn btn-primary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="w-5 h-5 mr-2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Thêm
-          </button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
         </div>
       </form>
     </div>
   </div>
   <% } %>
 
-  <div class="overflow-x-auto bg-base-100 p-6 rounded-lg shadow-xl">
-    <table class="table w-full">
+  <div class="table-container">
+    <table class="data-table">
       <thead>
-        <tr class="text-lg text-primary">
+        <tr>
           <th>#</th>
           <th>Email</th>
           <th>Tên</th>
@@ -152,16 +76,16 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
       </thead>
       <tbody>
         <% members.forEach((memberItem, index) => { %>
-        <tr class="hover">
-          <th><%= index + 1 %></th>
+        <tr>
+          <td><%= index + 1 %></td>
           <td><%= memberItem.email %></td>
-          <td class="font-medium"><%= memberItem.name %></td>
+          <td><%= memberItem.name %></td>
           <td>
-            <div
-              class="badge <%= memberItem.isAdmin ? 'badge-error font-bold' : 'badge-info' %>"
+            <span
+              class="<%= memberItem.isAdmin ? 'badge badge-admin' : 'badge badge-member' %>"
             >
               <%= memberItem.isAdmin ? 'Admin' : 'Member' %>
-            </div>
+            </span>
           </td>
           <td>
             <%= new Date(memberItem.createdAt).toLocaleDateString('vi-VN') %>
@@ -172,22 +96,9 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
     </table>
   </div>
 
-  <div role="alert" class="alert alert-info mt-6">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      class="stroke-current shrink-0 w-6 h-6"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      ></path>
-    </svg>
+  <div class="alert alert-info mt-6">
     <span
-      >Chỉ **Admin** mới có thể thêm thành viên. Ordinary members không được
+      >Chỉ <b>Admin</b> mới có thể thêm thành viên. Ordinary members không được
       thao tác.</span
     >
   </div>
@@ -200,21 +111,19 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   const openBtn = document.getElementById("openModalBtn");
   const closeBtn = document.getElementById("closeModalBtn");
 
-  openBtn.addEventListener("click", () => {
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-  });
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      modal.style.display = "flex";
+    });
 
-  closeBtn.addEventListener("click", () => {
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
-  });
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
 
-  // Click ra ngoài modal cũng đóng
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.classList.remove("flex");
-      modal.classList.add("hidden");
-    }
-  });
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  }
 </script>

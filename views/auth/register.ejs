@@ -1,65 +1,65 @@
-<%- include('../partials/header', { title: 'Đăng ký Tài khoản', user: null }) %>
-<%- include('../partials/navbar', { user: null }) %>
+<%- include('../partials/header', { title: 'Đăng ký Tài khoản', user: null,
+pageCss: 'register.css' }) %> <%- include('../partials/navbar', { user: null })
+%>
 
-<div class="hero min-h-screen bg-base-200 -mt-24 pt-24">
-  <div class="hero-content flex-col lg:flex-row-reverse">
-    <div class="text-center lg:text-left lg:ml-10">
-      <h1 class="text-5xl font-bold text-primary">Đăng ký thành viên</h1>
-      <p class="py-6 text-lg">
+<main class="register-page">
+  <section class="register-container">
+    <div class="register-info">
+      <h1>Đăng ký thành viên</h1>
+      <p>
         Trở thành thành viên để có thể bình luận và quản lý hồ sơ cá nhân của
         bạn.
       </p>
     </div>
-    <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-      <form action="/auth/register" method="POST" class="card-body">
+
+    <div class="register-card">
+      <form action="/auth/register" method="POST">
         <% if (error) { %>
-        <div class="alert alert-error mb-4"><%= error %></div>
+        <div class="alert-error"><%= error %></div>
         <% } %>
 
-        <div class="form-control">
-          <label class="label"
-            ><span class="label-text">Tên (membername)</span></label
-          >
+        <div class="form-group">
+          <label for="membername">Tên (membername)</label>
           <input
             type="text"
-            placeholder="Tên của bạn"
+            id="membername"
             name="membername"
-            class="input input-bordered"
+            placeholder="Tên của bạn"
             required
           />
         </div>
-        <div class="form-control">
-          <label class="label"><span class="label-text">Email </span></label>
+
+        <div class="form-group">
+          <label for="email">Email</label>
           <input
             type="email"
-            placeholder="example@myteam.com"
+            id="email"
             name="email"
-            class="input input-bordered"
+            placeholder="example@myteam.com"
             required
           />
         </div>
-        <div class="form-control">
-          <label class="label"><span class="label-text">Mật khẩu </span></label>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
           <input
             type="password"
-            placeholder="Mật khẩu"
+            id="password"
             name="password"
-            class="input input-bordered"
+            placeholder="Mật khẩu"
             required
           />
         </div>
-        <div class="form-control mt-6">
-          <button type="submit" class="btn btn-primary">Đăng ký</button>
-        </div>
-        <div class="text-center mt-4">
+
+        <button type="submit" class="btn-register">Đăng ký</button>
+
+        <p class="login-link">
           Đã có tài khoản?
-          <a href="/auth/login" class="link link-hover text-secondary"
-            >Đăng nhập</a
-          >
-        </div>
+          <a href="/auth/login">Đăng nhập</a>
+        </p>
       </form>
     </div>
-  </div>
-</div>
+  </section>
+</main>
 
 <%- include('../partials/footer') %>
