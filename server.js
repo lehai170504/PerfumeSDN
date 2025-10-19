@@ -38,7 +38,8 @@ app.use(checkUser);
 // --- 2. Cấu hình EJS View Engine và Static Files ---
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(
   session({
     secret: "secret-key",
