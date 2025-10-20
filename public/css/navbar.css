@@ -1,26 +1,474 @@
-/* ============================
-   PERFUME BLISS - NAVBAR
-   Tone hồng tím đồng bộ Home UI
-============================ */
+/* =================================================================
+  PERFUME BLISS - STYLESHEET CHUNG
+  Tông màu chủ đạo: Hồng Tím sang trọng (#b34da5 - #972d88)
+================================================================= */
+
+/* ===================================
+  BỐ CỤC CHUNG & NỀN
+=================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  font-family: "Inter", "Segoe UI", -apple-system, sans-serif;
+  background: linear-gradient(135deg, #fdfbfb 0%, #fef5f1 100%);
+  min-height: 100vh;
+  animation: fadeIn 0.6s ease both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================================
+  THÔNG BÁO (Alerts)
+=================================== */
+.alert {
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.5s ease both;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+}
+.alert-error {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+}
+.alert-info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  color: #0c5460;
+}
+.alert-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+  color: #856404;
+}
+
+/* ===================================
+  GRID CHI TIẾT NƯỚC HOA
+=================================== */
+.perfume-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(179, 77, 165, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(179, 77, 165, 0.08);
+  animation: fadeInUp 0.7s ease both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================================
+  ẢNH & THÔNG TIN
+=================================== */
+.perfume-image {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(179, 77, 165, 0.12);
+  transition: transform 0.5s ease;
+}
+.perfume-image:hover {
+  transform: scale(1.05);
+}
+
+.info-box {
+  background: linear-gradient(135deg, #fdfbfb 0%, #fef5f1 100%);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(179, 77, 165, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  margin-top: 1.5rem;
+}
+.info-box h3 {
+  font-size: 1.6rem;
+  color: #972d88;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.info-box p {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.price {
+  color: #e63946;
+  font-weight: 700;
+  font-size: 1.6rem;
+}
+
+/* ===================================
+  BADGE
+=================================== */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.brand {
+  background: linear-gradient(135deg, #007bff 0%, #005dc1 100%);
+  color: #fff;
+}
+.extrait {
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  color: #000;
+}
+.normal {
+  background: linear-gradient(135deg, #6c757d 0%, #555b61 100%);
+  color: #fff;
+}
+.target {
+  background: linear-gradient(135deg, #17a2b8 0%, #128394 100%);
+  color: #fff;
+}
+
+/* ===================================
+  PHẦN MÔ TẢ
+=================================== */
+.main h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #d8a7b1 0%, #b34da5 50%, #972d88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+.brand-line {
+  color: #555;
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+.block {
+  margin-top: 2rem;
+}
+.block h2 {
+  font-size: 1.6rem;
+  border-left: 4px solid #b34da5;
+  padding-left: 10px;
+  color: #972d88;
+  margin-bottom: 1rem;
+}
+.block p {
+  line-height: 1.7;
+  color: #444;
+}
+
+.posted-date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 1.5rem;
+  font-style: italic;
+}
+
+/* ===================================
+  FEEDBACK & COMMENT FORMS
+=================================== */
+.feedback h2 {
+  margin-top: 3rem;
+  border-left: 4px solid #2563eb;
+  padding-left: 10px;
+  color: #2563eb;
+}
+
+.comment-form label,
+.modal-box label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #444;
+}
+
+/* Range Input Styling */
+.comment-form input[type="range"],
+.modal-box input[type="range"] {
+  width: 100%;
+  margin-bottom: 1rem;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px; /* Tăng chiều cao thanh trượt */
+  background: #f0e6ee;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.comment-form input[type="range"]::-webkit-slider-thumb,
+.modal-box input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; /* Kích thước nút kéo to hơn */
+  height: 20px;
+  border-radius: 50%;
+  background: #b34da5;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(179, 77, 165, 0.5); /* Shadow rõ nét hơn */
+  transition: background 0.3s ease;
+}
+
+.comment-form textarea,
+.modal-box textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #f0e6ee;
+  background: #fafafa;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  resize: vertical;
+}
+.comment-form textarea:focus,
+.modal-box textarea:focus {
+  border-color: #b34da5;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(179, 77, 165, 0.1);
+}
+
+.comment-form button {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+/* ===================================
+  NÚT CHUNG & FORM
+=================================== */
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #d8a7b1 0%, #b34da5 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(179, 77, 165, 0.2);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #c58b9b 0%, #972d88 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(179, 77, 165, 0.3);
+}
+
+/* ===================================
+  COMMENT BOX & ACTIONS
+=================================== */
+.comment {
+  padding: 1.2rem;
+  border-left: 5px solid #ccc;
+  margin-top: 1.2rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.comment:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+.comment.good {
+  border-color: #22c55e;
+}
+.comment.average {
+  border-color: #3b82f6;
+}
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.comment .author {
+  font-weight: 700;
+  color: #1a1a1a;
+  flex-grow: 1;
+}
+.comment .rating {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 1rem;
+}
+.comment .you {
+  color: #e63946;
+  font-weight: 600;
+  margin-left: 5px;
+}
+.comment p {
+  margin: 10px 0;
+}
+.comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.comment-actions button,
+.comment-actions form button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-left: 8px;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+.comment-actions button:first-child {
+  background: #ffc107;
+  color: #444;
+}
+.comment-actions button:first-child:hover {
+  background: #e0ac00;
+}
+.comment-actions form button {
+  background: #dc3545;
+  color: white;
+}
+.comment-actions form button:hover {
+  background: #c82333;
+}
+.comment-actions form {
+  margin: 0;
+}
+
+/* ===================================
+  MODAL (Form Chỉnh sửa Comment)
+=================================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 2000; /* Tăng z-index cao hơn */
+}
+.modal[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: modalFadeIn 0.3s ease both;
+}
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-box {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 15px 50px rgba(179, 77, 165, 0.25);
+  animation: modalSlideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+@keyframes modalSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-box h3 {
+  font-size: 1.8rem;
+  color: #972d88;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modal-box form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Bố cục cho nhóm nút hành động */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  width: 50%; /* Chia đều 50% cho mỗi nút */
+  margin-top: 0 !important;
+}
+
+/* Nút Hủy (Secondary/Default) */
+.modal-actions button[type="button"] {
+  background: #e9ecef;
+  color: #495057;
+  border: 1px solid #ced4da;
+  box-shadow: none;
+}
+
+.modal-actions button[type="button"]:hover {
+  background: #d3d9df;
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+/* =================================================================
+  PERFUME BLISS - NAVBAR (Tối ưu hóa UI Cân đối & Hiện đại)
+================================================================= */
+
+/* ====== Thanh Navbar chung ====== */
 .navbar {
   background: linear-gradient(135deg, #d8a7b1 0%, #b34da5 50%, #972d88 100%);
   color: white;
-  box-shadow: 0 4px 18px rgba(179, 77, 165, 0.25);
+  box-shadow: 0 4px 15px rgba(179, 77, 165, 0.3);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
   font-family: "Inter", "Segoe UI", sans-serif;
   transition: all 0.3s ease;
 }
 
 .navbar:hover {
-  box-shadow: 0 6px 24px rgba(179, 77, 165, 0.35);
+  box-shadow: 0 6px 20px rgba(179, 77, 165, 0.4);
 }
 
 .navbar-container {
-  max-width: 1280px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 14px 28px;
+  padding: 14px 32px; /* Gọn hơn */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,22 +479,22 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 800;
-  font-size: 1.5rem;
-  letter-spacing: -0.5px;
+  font-weight: 900;
+  font-size: 1.6rem;
+  letter-spacing: -0.8px;
   text-decoration: none;
   color: #fff;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 .navbar-brand:hover {
-  opacity: 0.9;
-  transform: scale(1.03);
+  opacity: 0.95;
+  transform: scale(1.01);
 }
 
 .icon {
   width: 30px;
   height: 30px;
-  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3));
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 /* ====== Menu chính ====== */
@@ -54,7 +502,7 @@
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 28px; /* Gọn hơn */
   margin: 0;
   padding: 0;
 }
@@ -64,6 +512,7 @@
   font-weight: 600;
   text-decoration: none;
   font-size: 1rem;
+  padding: 6px 0;
   position: relative;
   transition: color 0.3s ease;
 }
@@ -71,12 +520,12 @@
 .menu a::after {
   content: "";
   position: absolute;
-  left: 0;
-  bottom: -4px;
+  left: 50%;
+  bottom: -2px;
   width: 0%;
   height: 2px;
-  background: #fff;
-  transition: width 0.3s ease;
+  background: #fce4ec;
+  transition: width 0.3s ease, left 0.3s ease;
 }
 
 .menu a:hover {
@@ -84,17 +533,25 @@
 }
 .menu a:hover::after {
   width: 100%;
+  left: 0;
 }
 
-/* ====== Nút đăng nhập / đăng ký ====== */
+/* ====== Nút đăng nhập / đăng ký (Tối ưu hóa) ====== */
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .btn-login,
 .btn-register {
-  padding: 8px 18px;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 8px 18px; /* Gọn hơn */
+  border-radius: 18px;
+  font-weight: 700;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid transparent;
 }
 
 .btn-login {
@@ -102,22 +559,28 @@
   color: #972d88;
 }
 .btn-login:hover {
-  background: #f8e5f7;
-  transform: translateY(-2px);
+  background: #fff;
+  color: #b34da5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .btn-register {
   background: linear-gradient(135deg, #c58b9b 0%, #972d88 100%);
   color: white;
+  border: 1px solid #fff;
 }
 .btn-register:hover {
   background: linear-gradient(135deg, #b34da5 0%, #812271 100%);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* ====== Dropdown ====== */
+/* ====== Dropdown (Tối ưu hóa) ====== */
 .dropdown {
   position: relative;
+  margin-left: 15px;
+  z-index: 1100;
 }
 
 .dropdown-btn {
@@ -129,26 +592,30 @@
   font-size: 1rem;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: opacity 0.3s;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  transition: all 0.3s;
 }
 
 .dropdown-btn:hover {
-  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 1;
 }
 
 .dropdown-menu {
   position: absolute;
   right: 0;
-  top: 120%;
+  top: 100%;
+  margin-top: 10px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(179, 77, 165, 0.25);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(179, 77, 165, 0.05); /* Gọn và nhẹ hơn */
   display: none;
   flex-direction: column;
   min-width: 200px;
   overflow: hidden;
-  animation: fadeIn 0.25s ease;
+  animation: fadeIn 0.3s ease forwards;
 }
 
 .dropdown-menu.show {
@@ -161,7 +628,7 @@
 
 .dropdown-menu a {
   display: block;
-  padding: 12px 18px;
+  padding: 12px 18px; /* Gọn hơn */
   color: #333;
   font-weight: 500;
   text-decoration: none;
@@ -169,41 +636,59 @@
 }
 
 .dropdown-menu a:hover {
-  background: #fdf0fb;
-  color: #b34da5;
+  background: #f8e5f7;
+  color: #972d88;
 }
 
 .logout a {
-  color: #c62828;
+  color: #e63946;
   font-weight: 600;
+  border-top: 1px solid #f0f0f0;
 }
 .logout a:hover {
-  background: #ffebee;
-}
-
-/* ====== Animation ====== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  background: #ffebeb;
 }
 
 /* ====== Responsive ====== */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .menu {
-    gap: 16px;
+    gap: 20px;
   }
+}
 
+@media (max-width: 768px) {
   .navbar-container {
-    padding: 10px 18px;
+    padding: 10px 18px; /* Rất gọn */
   }
 
   .navbar-brand {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+  }
+
+  .perfume-grid {
+    grid-template-columns: 1fr; /* Stack cột trên màn hình nhỏ */
+  }
+
+  /* ẨN CÁC MỤC MENU KHÔNG PHẢI DROPDOWN */
+  .menu > li {
+    display: none;
+  }
+
+  /* HIỆN LẠI MỤC DROPDOWN */
+  .menu > .dropdown {
+    display: block;
+    margin-left: 0;
+  }
+
+  /* Tối ưu nút Đăng nhập/Đăng ký trên mobile */
+  .auth-buttons {
+    gap: 8px;
+  }
+  .btn-login,
+  .btn-register {
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    border-radius: 16px;
+    font-weight: 600;
   }
 }

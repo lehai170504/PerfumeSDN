@@ -49,20 +49,12 @@ const authMember = async (req, res) => {
 };
 
 const registerMember = async (req, res) => {
-  const { name, email, password, YOB, gender, adminKey } = req.body;
+  const { name, email, password, YOB, gender } = req.body;
 
   try {
     const memberExists = await Member.findOne({ email });
     if (memberExists) {
       return sendResponse(res, 400, false, "Thành viên đã tồn tại");
-    }
-
-    // Mặc định user thường
-    let isAdmin = false;
-
-    // Nếu có adminKey đúng -> cho phép tạo admin
-    if (adminKey && adminKey === process.env.ADMIN_KEY) {
-      isAdmin = true;
     }
 
     const member = await Member.create({
@@ -71,29 +63,109 @@ const registerMember = async (req, res) => {
       name,
       YOB,
       gender,
-      isAdmin,
+      isAdmin: false,
     });
 
     if (member) {
+      const { _id, name, email, YOB, gender } = member;
+
       return sendResponse(res, 201, true, "Đăng ký thành công", {
         user: {
-          id: member._id,
-          name: member.name,
-          email: member.email,
-          YOB: member.YOB,
-          gender: member.gender,
-          isAdmin: member.isAdmin,
+          id: _id,
+          name,
+          email,
+          YOB,
+          gender,
+          isAdmin: false,
         },
-        token: generateToken(member._id),
+        token: generateToken(_id),
       });
     } else {
       return sendResponse(res, 400, false, "Dữ liệu thành viên không hợp lệ");
     }
   } catch (error) {
+    console.error(error);
     return sendResponse(res, 500, false, "Lỗi server", null, error.message);
   }
 };
 
+const createAdmin = async (req, res) => {
+  const { name, email, password, YOB, gender } = req.body;
+
+  try {
+    const memberExists = await Member.findOne({ email });
+    if (memberExists) {
+      if (
+        req.headers.accept &&
+        req.headers.accept.includes("application/json")
+      ) {
+        return sendResponse(res, 400, false, "Email đã được sử dụng");
+      }
+      req.flash("error", "Email đã được sử dụng.");
+      return res.redirect("/admin/manage_members");
+    }
+    const adminMember = await Member.create({
+      email,
+      password,
+      name,
+      YOB,
+      gender,
+      isAdmin: true, // Luôn là Admin
+    });
+
+    if (adminMember) {
+      const userData = {
+        id: adminMember._id,
+        name: adminMember.name,
+        email: adminMember.email,
+        isAdmin: true,
+      };
+
+      if (
+        req.headers.accept &&
+        req.headers.accept.includes("application/json")
+      ) {
+        return sendResponse(res, 201, true, "Tạo tài khoản Admin thành công", {
+          user: userData,
+        });
+      }
+
+      req.flash(
+        "success",
+        `Tạo tài khoản Admin "${adminMember.name}" thành công!`
+      );
+      return res.redirect("/admin/manage_members");
+    } else {
+      // Lỗi dữ liệu không hợp lệ (Hiếm)
+      if (
+        req.headers.accept &&
+        req.headers.accept.includes("application/json")
+      ) {
+        return sendResponse(res, 400, false, "Dữ liệu Admin không hợp lệ");
+      }
+
+      req.flash("error", "Dữ liệu Admin không hợp lệ.");
+      return res.redirect("/admin/manage_members");
+    }
+  } catch (error) {
+    console.error(error);
+
+    // Xử lý lỗi Server 500
+    if (req.headers.accept && req.headers.accept.includes("application/json")) {
+      return sendResponse(
+        res,
+        500,
+        false,
+        "Lỗi server khi tạo Admin",
+        null,
+        error.message
+      );
+    }
+
+    req.flash("error", "Lỗi server khi tạo Admin.");
+    return res.redirect("/admin/manage_members");
+  }
+};
 const logoutMember = (req, res) => {
   // Xóa cookie JWT
   res.cookie("jwt", "", {
@@ -105,4 +177,4 @@ const logoutMember = (req, res) => {
   return res.redirect("/auth/login");
 };
 
-module.exports = { authMember, registerMember, logoutMember };
+module.exports = { authMember, registerMember, logoutMember, createAdmin };

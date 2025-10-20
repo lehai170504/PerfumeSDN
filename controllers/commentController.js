@@ -75,77 +75,67 @@ exports.postComment = [
 ];
 
 // PUT /perfumes/:perfumeId/comments/:commentId - Chỉnh sửa comment của chính mình
-// UPDATE comment
 exports.updateComment = async (req, res, next) => {
   try {
     const { perfumeId, commentId } = req.params;
+    const isJsonRequest = req.headers.accept?.includes("json");
 
+    // 1. Tìm và xác thực quyền sở hữu Comment
     const comment = await Comment.findOne({
       _id: commentId,
-      author: req.member._id,
+      author: req.member._id, // Đảm bảo người dùng hiện tại là tác giả
     });
 
     if (!comment) {
-      if (req.headers.accept?.includes("json")) {
-        return sendResponse(
-          res,
-          404,
-          false,
-          "Comment not found or access denied."
-        );
+      const message = "Comment not found or access denied.";
+      if (isJsonRequest) {
+        return sendResponse(res, 404, false, message);
       } else {
-        req.flash("error", "Comment not found or access denied.");
+        req.flash("error", message);
         return res.redirect(`/perfumes/${perfumeId}`);
       }
     }
 
+    // 2. Xác thực Comment có thuộc về Perfume này
     const perfume = await Perfume.findById(perfumeId);
     if (!perfume || !perfume.comments.includes(commentId)) {
-      if (req.headers.accept?.includes("json")) {
-        return sendResponse(
-          res,
-          404,
-          false,
-          "Comment not linked to this perfume."
-        );
+      const message = "Comment not linked to this perfume.";
+      if (isJsonRequest) {
+        return sendResponse(res, 404, false, message);
       } else {
-        req.flash("error", "Comment not linked to this perfume.");
+        req.flash("error", message);
         return res.redirect(`/perfumes/${perfumeId}`);
       }
     }
 
+    // 3. Validation và Cập nhật Rating
     if (req.body.rating !== undefined) {
-      if (req.body.rating < 1 || req.body.rating > 3) {
-        if (req.headers.accept?.includes("json")) {
-          return sendResponse(
-            res,
-            400,
-            false,
-            "Rating must be between 1 and 3."
-          );
+      const rating = parseInt(req.body.rating);
+      if (rating < 1 || rating > 3 || isNaN(rating)) {
+        const message = "Rating must be between 1 and 3.";
+        if (isJsonRequest) {
+          return sendResponse(res, 400, false, message);
         } else {
-          req.flash("error", "Rating must be between 1 and 3.");
+          req.flash("error", message);
           return res.redirect(`/perfumes/${perfumeId}`);
         }
       }
-      comment.rating = req.body.rating;
+      comment.rating = rating;
     }
+
+    // 4. Cập nhật Content
     if (req.body.content !== undefined) {
       comment.content = req.body.content;
     }
 
+    // 5. Lưu và Phản hồi
     await comment.save();
 
-    if (req.headers.accept?.includes("json")) {
-      return sendResponse(
-        res,
-        200,
-        true,
-        "Comment updated successfully",
-        comment
-      );
+    const successMessage = "Comment updated successfully";
+    if (isJsonRequest) {
+      return sendResponse(res, 200, true, successMessage, comment);
     } else {
-      req.flash("success", "Comment updated successfully");
+      req.flash("success", successMessage);
       return res.redirect(`/perfumes/${perfumeId}#feedback-section`);
     }
   } catch (err) {
@@ -153,40 +143,42 @@ exports.updateComment = async (req, res, next) => {
   }
 };
 
-// DELETE comment
+// DELETE /perfumes/:perfumeId/comments/:commentId - Xóa comment
 exports.deleteComment = async (req, res, next) => {
   try {
     const { perfumeId, commentId } = req.params;
-
+    const isJsonRequest = req.headers.accept?.includes("json");
     const deletedComment = await Comment.findOneAndDelete({
       _id: commentId,
       author: req.member._id,
     });
 
     if (!deletedComment) {
-      if (req.headers.accept?.includes("json")) {
-        return sendResponse(
-          res,
-          404,
-          false,
-          "Comment not found or access denied."
-        );
+      const message = "Comment not found or access denied.";
+      if (isJsonRequest) {
+        return sendResponse(res, 404, false, message);
       } else {
-        req.flash("error", "Comment not found or access denied.");
+        req.flash("error", message);
         return res.redirect(`/perfumes/${perfumeId}`);
       }
     }
 
+    // 2. Xóa tham chiếu comment khỏi Perfume
     const perfume = await Perfume.findById(perfumeId);
     if (perfume) {
+      // Sử dụng .pull() của Mongoose để loại bỏ ID khỏi mảng
       perfume.comments.pull(commentId);
       await perfume.save();
     }
 
-    if (req.headers.accept?.includes("json")) {
-      return sendResponse(res, 200, true, "Comment deleted successfully");
+    // 3. Phản hồi
+    const successMessage = "Comment deleted successfully";
+    if (isJsonRequest) {
+      // Phản hồi thành công cho API
+      return sendResponse(res, 200, true, successMessage);
     } else {
-      req.flash("success", "Comment deleted successfully");
+      // Phản hồi thành công cho Web/EJS
+      req.flash("success", successMessage);
       return res.redirect(`/perfumes/${perfumeId}#feedback-section`);
     }
   } catch (err) {

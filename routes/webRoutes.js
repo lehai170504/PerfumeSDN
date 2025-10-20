@@ -10,8 +10,8 @@ const PerfumeController = require("../controllers/perfumeController");
 const MemberController = require("../controllers/memberController");
 const CommentController = require("../controllers/commentController");
 const upload = require("../middleware/uploadMiddleware");
-const { message } = require("../validations/auth/register.schema");
-
+const Member = require("../models/Member");
+const Perfume = require("../models/Perfume");
 const getHome = async (req, res, next) => {
   try {
     const brands = await Brand.find().select("_id brandName").lean();
@@ -98,6 +98,8 @@ router.post("/auth/login", AuthController.authMember);
 
 router.get("/auth/logout", AuthController.logoutMember);
 
+router.post("/auth/admin", protect, admin, AuthController.createAdmin);
+
 router.get("/member/profile", protect, async (req, res) => {
   res.render("member/profile", {
     title: "Thông Tin Cá Nhân",
@@ -136,30 +138,57 @@ router.get("/admin/dashboard", protect, admin, (req, res) => {
 
 router.get("/admin/manage_members", protect, admin, async (req, res, next) => {
   try {
-    // SỬA: Gọi hàm tiện ích findAllMembers()
-    const membersData = await MemberController.findAllMembers();
+    const perPage = 10;
+    const page = parseInt(req.query.page) || 1;
+
+    const totalMembers = await Member.countDocuments();
+
+    const membersData = await Member.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    // Flash message
+    const successMessages = req.flash("success");
+    const errorMessages = req.flash("error");
 
     res.render("admin/manage_members", {
       title: "Quản Lý Thành Viên",
       members: membersData || [],
       loggedInUser: req.member || null,
-      pageCss: null,
       member: req.member,
-      messages: null,
+      pageCss: null,
+      messages: {
+        success: successMessages,
+        error: errorMessages,
+      },
+      // 🧭 Thêm biến cho phân trang
+      currentPage: page,
+      totalPages: Math.ceil(totalMembers / perPage),
     });
   } catch (error) {
     next(error);
   }
 });
 
-// Hiển thị danh sách thương hiệu
 router.get("/admin/manage_brands", protect, admin, async (req, res, next) => {
   try {
-    const brands = await BrandController.findAllBrands();
+    const perPage = 10;
+    const page = parseInt(req.query.page) || 1;
+
+    const totalBrands = await Brand.countDocuments();
+    const brands = await Brand.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
     res.render("admin/manage_brands", {
       title: "Quản Lý Thương Hiệu",
       brands,
-      message: null,
+      currentPage: page,
+      totalPages: Math.ceil(totalBrands / perPage),
+      success_msg: req.flash("success"),
+      error_msg: req.flash("error"),
       loggedInUser: req.member || null,
       pageCss: null,
     });
@@ -194,7 +223,6 @@ router.delete(
   async (req, res, next) => {
     try {
       await BrandController.deleteBrand(req, res, next);
-      res.redirect("/admin/manage_brands");
     } catch (error) {
       next(error);
     }
@@ -203,23 +231,38 @@ router.delete(
 
 router.get("/admin/manage_perfumes", protect, admin, async (req, res, next) => {
   try {
+    const perPage = 10;
+    const page = parseInt(req.query.page) || 1;
     const brands = await Brand.find().select("_id brandName").lean();
-    const perfumesData = await PerfumeController.getPerfumes(req);
+    const totalPerfumes = await Perfume.countDocuments();
+    const perfumes = await Perfume.find()
+      .populate("brand", "brandName")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .lean();
+
+    const successMessages = req.flash("success");
+    const errorMessages = req.flash("error");
+
     res.render("admin/manage_perfumes", {
       title: "Quản Lý Nước Hoa",
-      perfumes: perfumesData || [],
-      brands: brands,
-      member: req.member,
+      perfumes,
+      brands,
+      currentPage: page,
+      totalPages: Math.ceil(totalPerfumes / perPage),
       loggedInUser: req.member || null,
       pageCss: null,
-      message: null,
+      messages: {
+        success: successMessages,
+        error: errorMessages,
+      },
     });
   } catch (error) {
     next(error);
   }
 });
 
-// Tạo nước hoa (POST từ EJS form)
 router.post(
   "/admin/perfumes",
   protect,
@@ -228,7 +271,6 @@ router.post(
   async (req, res, next) => {
     try {
       await PerfumeController.createPerfume(req, res, next);
-      res.redirect("/admin/manage_perfumes");
     } catch (error) {
       next(error);
     }
@@ -244,7 +286,6 @@ router.put(
   async (req, res, next) => {
     try {
       await PerfumeController.updatePerfume(req, res, next);
-      res.redirect("/admin/manage_perfumes");
     } catch (error) {
       next(error);
     }
@@ -254,8 +295,7 @@ router.put(
 // Xóa nước hoa
 router.delete("/admin/perfumes/:id", protect, admin, async (req, res, next) => {
   try {
-    await PerfumeController.deletePerfume(req, res, next);
-    res.redirect("/admin/manage_perfumes");
+    await PerfumeController.deletePerfume(req, res);
   } catch (error) {
     next(error);
   }
@@ -268,22 +308,15 @@ router.get("/perfumes/:id", getPerfumeDetails);
 router.put(
   "/perfumes/:perfumeId/comment/:commentId",
   protect,
-  CommentController.updateComment, // Controller API (cần sửa lại logic redirect trong Controller)
-  (req, res) => {
-    req.flash("success", "Đã cập nhật bình luận thành công!");
-    res.redirect(`/perfumes/${req.params.perfumeId}`);
-  }
+  CommentController.updateComment // <--- Controller đã xử lý Redirect/Flash thành công
 );
 
 // DELETE /perfumes/:perfumeId/comment/:commentId - Xóa comment
+// Controller tự quyết định gửi JSON hay Redirect
 router.delete(
   "/perfumes/:perfumeId/comment/:commentId",
   protect,
-  CommentController.deleteComment, // Controller API (cần sửa lại logic redirect trong Controller)
-  (req, res) => {
-    req.flash("success", "Đã xóa bình luận thành công!");
-    res.redirect(`/perfumes/${req.params.perfumeId}`);
-  }
+  CommentController.deleteComment // <--- Controller đã xử lý Redirect/Flash thành công
 );
 
 module.exports = router;

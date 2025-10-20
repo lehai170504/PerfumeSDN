@@ -5,9 +5,10 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   <h1 class="page-title">Quản lý Nước hoa (Perfumes)</h1>
 
   <div class="top-bar">
-    <span class="count"
-      >Tổng số: <strong><%= perfumes.length %></strong> sản phẩm</span
-    >
+    <span class="count">
+      Tổng số: <strong><%= perfumes.length %></strong> sản phẩm
+    </span>
+
     <button
       class="btn btn-secondary"
       onclick="document.getElementById('add_perfume_modal').showModal()"
@@ -16,13 +17,17 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
     </button>
   </div>
 
-  <% if (message) { %>
-  <div
-    class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-error' %>"
-  >
-    <%= message.text %>
+  <% if (messages) { %> <% if (messages.success?.length > 0) { %> <%
+  messages.success.forEach(msg => { %>
+  <div class="alert alert-success">
+    <span><%= msg %></span>
   </div>
-  <% } %>
+  <% }) %> <% } %> <% if (messages.error?.length > 0) { %> <%
+  messages.error.forEach(msg => { %>
+  <div class="alert alert-error">
+    <span><%= msg %></span>
+  </div>
+  <% }) %> <% } %> <% } %>
 
   <div class="table-wrapper">
     <table class="perfume-table">
@@ -37,6 +42,7 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
           <th>Hành động</th>
         </tr>
       </thead>
+
       <tbody>
         <% perfumes.forEach((perfume, index) => { %>
         <tr>
@@ -59,20 +65,23 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
             </span>
           </td>
           <td>
-            <button
-              class="btn btn-warning btn-xs"
-              onclick="editPerfume('<%= JSON.stringify(perfume) %>')"
-            >
-              Sửa
-            </button>
-            <form
-              action="/admin/perfumes/<%= perfume._id %>?_method=DELETE"
-              method="POST"
-              class="inline-form"
-              onsubmit="return confirm('Xác nhận xóa nước hoa <%= perfume.perfumeName %>?');"
-            >
-              <button type="submit" class="btn btn-error btn-xs">Xóa</button>
-            </form>
+            <div class="action-buttons">
+              <button
+                class="btn btn-warning btn-xs"
+                onclick="editPerfume('<%= JSON.stringify(perfume) %>')"
+              >
+                Sửa
+              </button>
+
+              <form
+                action="/admin/perfumes/<%= perfume._id %>?_method=DELETE"
+                method="POST"
+                class="inline-form"
+                onsubmit="return confirm('Xác nhận xóa nước hoa <%= perfume.perfumeName %>?');"
+              >
+                <button type="submit" class="btn btn-error btn-xs">Xóa</button>
+              </form>
+            </div>
           </td>
         </tr>
         <% }) %> <% if (perfumes.length === 0) { %>
@@ -84,32 +93,40 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
         <% } %>
       </tbody>
     </table>
+
+    <div class="pagination">
+      <% if (totalPages > 1) { %>
+      <div class="flex justify-center gap-2 mt-6">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+        <a
+          href="/admin/manage_perfumes?page=<%= i %>"
+          class="btn btn-sm <%= currentPage === i ? 'btn-active btn-primary' : 'btn-outline' %>"
+        >
+          <%= i %>
+        </a>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
   </div>
 </div>
-
-<!-- MODAL ADD PERFUME -->
+<!-- ============================= -->
+<!-- Modal: Thêm nước hoa mới -->
+<!-- ============================= -->
 <dialog id="add_perfume_modal" class="modal">
   <div class="modal-box">
     <h3 class="modal-title">Thêm Nước hoa Mới</h3>
+
     <form
       action="/admin/perfumes"
       method="POST"
       enctype="multipart/form-data"
       class="form-grid"
     >
-      <div class="form-group">
+      <!-- Cột trái - phải, mỗi hàng 2 input -->
+      <div class="form-group full">
         <label>Tên Nước hoa</label>
         <input type="text" name="perfumeName" required />
-      </div>
-
-      <div class="form-group">
-        <label>Thương hiệu</label>
-        <select name="brandId" required>
-          <option value="">Chọn Thương hiệu</option>
-          <% brands.forEach(brand => { %>
-          <option value="<%= brand._id %>"><%= brand.brandName %></option>
-          <% }) %>
-        </select>
       </div>
 
       <div class="form-group">
@@ -143,6 +160,16 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
         </select>
       </div>
 
+      <div class="form-group">
+        <label>Thương hiệu</label>
+        <select name="brandId" required>
+          <option value="">Chọn Thương hiệu</option>
+          <% brands.forEach(brand => { %>
+          <option value="<%= brand._id %>"><%= brand.brandName %></option>
+          <% }) %>
+        </select>
+      </div>
+
       <div class="form-group full">
         <label>Ảnh sản phẩm</label>
         <input type="file" name="image" accept="image/*" required />
@@ -172,46 +199,78 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   </div>
 </dialog>
 
-<!-- MODAL EDIT PERFUME -->
+<!-- ============================= -->
+<!-- Modal: Chỉnh sửa nước hoa -->
+<!-- ============================= -->
 <dialog id="edit_perfume_modal" class="modal">
   <div class="modal-box">
     <h3 class="modal-title warning">Chỉnh sửa Nước hoa</h3>
-    <form id="editPerfumeForm" method="POST">
-      <input type="hidden" name="_method" value="PUT" />
 
-      <div class="form-grid">
-        <div class="form-group full">
-          <label>Tên</label>
-          <input id="editPerfumeName" name="perfumeName" required />
-        </div>
-        <div class="form-group">
-          <label>Giá</label>
-          <input id="editPrice" name="price" required />
-        </div>
-        <div class="form-group">
-          <label>Dung tích</label>
-          <input id="editVolume" name="volume" required />
-        </div>
-        <div class="form-group">
-          <label>Thương hiệu</label>
-          <select id="editBrandId" name="brandId">
-            <% brands.forEach(brand => { %>
-            <option value="<%= brand._id %>"><%= brand.brandName %></option>
-            <% }) %>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label>URL Ảnh</label>
-          <input id="editUri" name="uri" required />
-        </div>
-        <div class="form-group full">
-          <label>Mô tả</label>
-          <textarea id="editDescription" name="description"></textarea>
-        </div>
-        <div class="form-group full">
-          <label>Thành phần</label>
-          <textarea id="editIngredients" name="ingredients"></textarea>
-        </div>
+    <form
+      id="editPerfumeForm"
+      method="POST"
+      enctype="multipart/form-data"
+      class="form-grid"
+    >
+      <div class="form-group full">
+        <label>Tên</label>
+        <input type="text" id="editPerfumeName" name="perfumeName" required />
+      </div>
+
+      <div class="form-group">
+        <label>Giá</label>
+        <input type="number" id="editPrice" name="price" required />
+      </div>
+
+      <div class="form-group">
+        <label>Dung tích</label>
+        <input type="number" id="editVolume" name="volume" required />
+      </div>
+
+      <div class="form-group">
+        <label>Đối tượng</label>
+        <select id="editTargetAudience" name="targetAudience" required>
+          <option value="male">Nam</option>
+          <option value="female">Nữ</option>
+          <option value="unisex">Unisex</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Nồng độ</label>
+        <select id="editConcentration" name="concentration" required>
+          <option value="Extrait">Extrait</option>
+          <option value="EDP">EDP</option>
+          <option value="EDT">EDT</option>
+          <option value="EDC">EDC</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Thương hiệu</label>
+        <select id="editBrandId" name="brandId">
+          <% brands.forEach(brand => { %>
+          <option value="<%= brand._id %>"><%= brand.brandName %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group full">
+        <label>Cập nhật Ảnh sản phẩm (Để trống nếu không đổi)</label>
+        <input type="file" name="image" accept="image/*" />
+        <span id="currentUriDisplay" class="text-muted text-xs">
+          Ảnh cũ: <a href="" target="_blank"></a>
+        </span>
+      </div>
+
+      <div class="form-group full">
+        <label>Mô tả</label>
+        <textarea id="editDescription" name="description"></textarea>
+      </div>
+
+      <div class="form-group full">
+        <label>Thành phần</label>
+        <textarea id="editIngredients" name="ingredients"></textarea>
       </div>
 
       <div class="modal-actions">
@@ -232,16 +291,23 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   function editPerfume(perfumeJson) {
     const perfume = JSON.parse(perfumeJson.replace(/&quot;/g, '"'));
     const form = document.getElementById("editPerfumeForm");
-    form.action = `/admin/perfumes/${perfume._id}?_method=PUT`;
 
+    form.action = `/admin/perfumes/${perfume._id}?_method=PUT`;
     document.getElementById("editPerfumeName").value = perfume.perfumeName;
     document.getElementById("editPrice").value = perfume.price;
     document.getElementById("editVolume").value = perfume.volume;
-    document.getElementById("editUri").value = perfume.uri;
     document.getElementById("editDescription").value = perfume.description;
     document.getElementById("editIngredients").value = perfume.ingredients;
     document.getElementById("editBrandId").value =
       perfume.brand._id || perfume.brand;
+    document.getElementById("editTargetAudience").value =
+      perfume.targetAudience;
+    document.getElementById("editConcentration").value = perfume.concentration;
+
+    const uriDisplay = document.querySelector("#currentUriDisplay a");
+    uriDisplay.href = perfume.uri;
+    uriDisplay.textContent = perfume.uri.split("/").pop();
+
     edit_perfume_modal.showModal();
   }
 </script>

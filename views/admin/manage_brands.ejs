@@ -12,12 +12,10 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
     </button>
   </div>
 
-  <% if (message) { %>
-  <div
-    class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-error' %>"
-  >
-    <%= message.text %>
-  </div>
+  <% if (success_msg && success_msg.length > 0) { %>
+  <div class="alert alert-success mb-4"><%= success_msg %></div>
+  <% } %> <% if (error_msg && error_msg.length > 0) { %>
+  <div class="alert alert-error mb-4"><%= error_msg %></div>
   <% } %>
 
   <div class="table-wrapper">
@@ -25,7 +23,6 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
       <thead>
         <tr>
           <th>STT</th>
-          <th>ID Thương hiệu</th>
           <th>Tên Thương hiệu</th>
           <th>Ngày Tạo</th>
           <th>Hành động</th>
@@ -41,16 +38,16 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
         <% } else { %> <% brands.forEach((brand, index) => { %>
         <tr>
           <td><%= index + 1 %></td>
-          <td class="mono"><%= brand._id %></td>
           <td><%= brand.brandName %></td>
           <td><%= new Date(brand.createdAt).toLocaleDateString('vi-VN') %></td>
-          <td>
+          <td class="action-buttons">
             <button
               class="btn btn-warning btn-xs"
               onclick="editBrand('<%= brand._id %>', '<%= brand.brandName %>')"
             >
               Sửa
             </button>
+
             <form
               action="/admin/brands/<%= brand._id %>?_method=DELETE"
               method="POST"
@@ -64,6 +61,20 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
         <% }) %> <% } %>
       </tbody>
     </table>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+    <div class="pagination">
+      <% for (let i = 1; i <= totalPages; i++) { %>
+      <a
+        href="/admin/manage_brands?page=<%= i %>"
+        class="page-link <%= i === currentPage ? 'active' : '' %>"
+      >
+        <%= i %>
+      </a>
+      <% } %>
+    </div>
+    <% } %>
   </div>
 
   <div class="alert alert-warning mt-6">

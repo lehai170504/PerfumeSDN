@@ -3,12 +3,14 @@ const {
   registerMember,
   authMember,
   logoutMember,
+  createAdmin,
 } = require("../controllers/authController");
 const router = express.Router();
 
 // Import Middleware và Validation Schemas
 const validate = require("../middleware/validate");
-
+const { protect } = require("../middleware/auth");
+const { admin } = require("../middleware/admin");
 const { registerSchema, loginSchema } = require("../validations/auth");
 
 // ----------------------------------------------------
@@ -76,6 +78,71 @@ const { registerSchema, loginSchema } = require("../validations/auth");
  *                   example: Email đã tồn tại hoặc dữ liệu không hợp lệ
  */
 router.post("/register", validate(registerSchema), registerMember);
+
+/**
+ * @swagger
+ * /auth/admin:
+ *   post:
+ *     summary: Tạo tài khoản Admin mới (Chỉ Admin mới được phép gọi)
+ *     tags:
+ *       - Authentication
+ *     security:
+ *       - cookieAuth: []  # Yêu cầu Cookie/Token để xác thực
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Admin Nguyễn
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: new.admin@domain.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: AdminPass123
+ *               YOB:
+ *                 type: number
+ *                 example: 1990
+ *               gender:
+ *                 type: string
+ *                 example: male
+ *     responses:
+ *       '201':
+ *         description: Tạo Admin thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 60d0fe4f5311236168a109ca
+ *                     email:
+ *                       type: string
+ *                       example: new.admin@domain.com
+ *                     isAdmin:
+ *                       type: boolean
+ *                       example: true
+ *       '400':
+ *         description: Email đã được sử dụng hoặc dữ liệu không hợp lệ
+ *       '403':
+ *         description: Không được cấp phép. Chỉ dành cho Admin.
+ */
+
+router.post("/admin", protect, admin, validate(registerSchema), createAdmin);
 
 /**
  * @swagger

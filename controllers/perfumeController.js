@@ -86,19 +86,14 @@ const createPerfume = async (req, res, next) => {
       ingredients,
     } = req.body;
 
-    // 🖼️ Kiểm tra file upload từ Multer
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     if (!imagePath) {
       console.warn("⚠️ Không có ảnh tải lên!");
-      req.session.message = {
-        type: "error",
-        text: "Vui lòng tải lên hình ảnh sản phẩm!",
-      };
+      req.flash("error", "Vui lòng tải lên hình ảnh sản phẩm!");
       return res.redirect("/admin/manage_perfumes");
     }
 
-    // 🧩 Tạo perfume mới
     await Perfume.create({
       perfumeName,
       brand: brandId,
@@ -112,19 +107,12 @@ const createPerfume = async (req, res, next) => {
     });
 
     console.log("✅ Tạo perfume thành công:", perfumeName);
-
-    req.session.message = {
-      type: "success",
-      text: "Tạo nước hoa mới thành công!",
-    };
+    req.flash("success", "Tạo nước hoa mới thành công!");
 
     return res.redirect("/admin/manage_perfumes");
   } catch (error) {
     console.error("❌ Lỗi khi tạo perfume:", error);
-    req.session.message = {
-      type: "error",
-      text: "Đã xảy ra lỗi khi tạo nước hoa.",
-    };
+    req.flash("error", "Đã xảy ra lỗi khi tạo nước hoa.");
     next(error);
   }
 };
@@ -147,19 +135,15 @@ const updatePerfume = async (req, res, next) => {
     const perfume = await Perfume.findById(id);
     if (!perfume) {
       console.warn("⚠️ Không tìm thấy perfume ID:", id);
-      req.session.message = {
-        type: "error",
-        text: "Không tìm thấy nước hoa để cập nhật!",
-      };
+      // SỬ DỤNG req.flash
+      req.flash("error", "Không tìm thấy nước hoa để cập nhật!");
       return res.redirect("/admin/manage_perfumes");
-    }
+    } // 🖼️ Nếu có file upload thì thay ảnh, ngược lại giữ ảnh cũ
 
-    // 🖼️ Nếu có file upload thì thay ảnh, ngược lại giữ ảnh cũ
     const newImagePath = req.file
       ? `/uploads/${req.file.filename}`
-      : perfume.uri;
+      : perfume.uri; // 🧩 Cập nhật dữ liệu
 
-    // 🧩 Cập nhật dữ liệu
     perfume.perfumeName = perfumeName;
     perfume.brand = brandId;
     perfume.price = price;
@@ -173,19 +157,12 @@ const updatePerfume = async (req, res, next) => {
     await perfume.save();
 
     console.log("✅ Cập nhật perfume thành công:", perfumeName);
-
-    req.session.message = {
-      type: "success",
-      text: "Cập nhật nước hoa thành công!",
-    };
+    req.flash("success", "Cập nhật nước hoa thành công!");
 
     return res.redirect("/admin/manage_perfumes");
   } catch (error) {
     console.error("❌ Lỗi khi cập nhật perfume:", error);
-    req.session.message = {
-      type: "error",
-      text: "Đã xảy ra lỗi khi cập nhật nước hoa.",
-    };
+    req.flash("error", "Đã xảy ra lỗi khi cập nhật nước hoa.");
     next(error);
   }
 };
@@ -193,11 +170,19 @@ const updatePerfume = async (req, res, next) => {
 // 🧠 Xóa perfume
 const deletePerfume = async (req, res) => {
   try {
-    await Perfume.findByIdAndDelete(req.params.id);
-    res.redirect("/admin/manage_perfumes");
+    const deletedPerfume = await Perfume.findByIdAndDelete(req.params.id);
+
+    if (!deletedPerfume) {
+      req.flash("error", "Không tìm thấy nước hoa để xóa.");
+      return res.redirect("/admin/manage_perfumes");
+    }
+
+    req.flash("success", "Xóa nước hoa thành công.");
+    return res.redirect("/admin/manage_perfumes");
   } catch (error) {
     console.error("❌ Lỗi khi xóa perfume:", error);
-    res.status(500).send("Không thể xóa perfume");
+    req.flash("error", "Đã xảy ra lỗi khi xóa nước hoa.");
+    return res.redirect("/admin/manage_perfumes");
   }
 };
 
@@ -242,46 +227,6 @@ const searchPerfumes = async (req, res) => {
   }
 };
 
-// [Public] Lấy danh sách perfume theo Brand
-const getPerfumesByBrand = async (req, res) => {
-  try {
-    const { brandId } = req.params; // Kiểm tra xem brandId có hợp lệ không
-
-    if (!brandId) {
-      return sendResponse(res, 400, false, "Vui lòng cung cấp ID thương hiệu");
-    }
-
-    const perfumes = await Perfume.find({ brand: brandId }).populate(
-      "brand",
-      "brandName"
-    );
-
-    if (perfumes.length === 0) {
-      return sendResponse(
-        res,
-        200,
-        true,
-        "Không tìm thấy nước hoa nào cho thương hiệu này",
-        []
-      );
-    }
-
-    return sendResponse(
-      res,
-      200,
-      true,
-      `Danh sách nước hoa của Brand ID: ${brandId}`,
-      perfumes
-    );
-  } catch (error) {
-    // Xử lý nếu brandId không đúng định dạng ObjectId của MongoDB
-    if (error.kind === "ObjectId") {
-      return sendResponse(res, 400, false, "ID thương hiệu không hợp lệ");
-    }
-    return sendResponse(res, 500, false, "Lỗi server", null, error.message);
-  }
-};
-
 module.exports = {
   getPerfumes,
   getPerfumeById,
@@ -289,6 +234,5 @@ module.exports = {
   updatePerfume,
   deletePerfume,
   searchPerfumes,
-  getPerfumesByBrand,
   findPerfume,
 };

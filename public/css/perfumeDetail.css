@@ -1,5 +1,5 @@
 /* ===================================
-   BỐ CỤC CHUNG & NỀN
+  BỐ CỤC CHUNG & NỀN
 =================================== */
 .container {
   max-width: 1200px;
@@ -23,7 +23,7 @@
 }
 
 /* ===================================
-   THÔNG BÁO
+  THÔNG BÁO
 =================================== */
 .alert {
   padding: 14px 18px;
@@ -52,7 +52,7 @@
 }
 
 /* ===================================
-   GRID CHI TIẾT NƯỚC HOA
+  GRID CHI TIẾT NƯỚC HOA
 =================================== */
 .perfume-grid {
   display: grid;
@@ -78,7 +78,7 @@
 }
 
 /* ===================================
-   ẢNH & THÔNG TIN
+  ẢNH & THÔNG TIN
 =================================== */
 .perfume-image {
   width: 100%;
@@ -96,6 +96,7 @@
   border-radius: 16px;
   border: 1px solid rgba(179, 77, 165, 0.08);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  margin-top: 1.5rem; /* Thêm khoảng cách với ảnh */
 }
 .info-box h3 {
   font-size: 1.6rem;
@@ -104,15 +105,19 @@
   margin-bottom: 1rem;
 }
 
+.info-box p {
+  margin-bottom: 0.5rem; /* Giảm khoảng cách giữa các dòng info */
+  line-height: 1.5;
+}
+
 .price {
   color: #e63946;
   font-weight: 700;
   font-size: 1.6rem;
-  margin-bottom: 0.8rem;
 }
 
 /* ===================================
-   BADGE
+  BADGE
 =================================== */
 .badge {
   display: inline-block;
@@ -142,7 +147,7 @@
 }
 
 /* ===================================
-   PHẦN MÔ TẢ
+  PHẦN MÔ TẢ
 =================================== */
 .main h1 {
   font-size: 2.5rem;
@@ -155,6 +160,7 @@
 .brand-line {
   color: #555;
   font-style: italic;
+  margin-bottom: 2rem;
 }
 
 .block {
@@ -172,8 +178,15 @@
   color: #444;
 }
 
+.posted-date {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 1.5rem;
+  font-style: italic;
+}
+
 /* ===================================
-   FEEDBACK & COMMENT
+  FEEDBACK & COMMENT
 =================================== */
 .feedback h2 {
   margin-top: 3rem;
@@ -182,7 +195,43 @@
   color: #2563eb;
 }
 
-.comment-form textarea {
+.comment-form label,
+.modal-box label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.comment-form input[type="range"],
+.modal-box input[type="range"] {
+  width: 100%;
+  margin-bottom: 1rem;
+  -webkit-appearance: none; /* Xóa style mặc định */
+  appearance: none;
+  height: 8px;
+  background: #f0e6ee;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Tùy chỉnh thumb (nút kéo) cho range input */
+.comment-form input[type="range"]::-webkit-slider-thumb,
+.modal-box input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #b34da5;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(179, 77, 165, 0.3);
+  transition: background 0.3s ease;
+}
+
+.comment-form textarea,
+.modal-box textarea {
   width: 100%;
   height: 100px;
   padding: 12px;
@@ -190,16 +239,23 @@
   border: 2px solid #f0e6ee;
   background: #fafafa;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  resize: vertical;
 }
-.comment-form textarea:focus {
+.comment-form textarea:focus,
+.modal-box textarea:focus {
   border-color: #b34da5;
   outline: none;
   box-shadow: 0 0 0 4px rgba(179, 77, 165, 0.1);
 }
 
+.comment-form button {
+  margin-top: 1.5rem;
+  width: 100%; /* Đảm bảo nút Gửi chiếm hết chiều rộng form */
+}
+
 /* ===================================
-   NÚT & FORM
+  NÚT & FORM
 =================================== */
 .btn {
   padding: 10px 18px;
@@ -217,21 +273,40 @@
 .btn-primary:hover {
   background: linear-gradient(135deg, #c58b9b 0%, #972d88 100%);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(179, 77, 165, 0.3);
+}
+
+/* Nút Sửa/Xóa trong comment */
+.comment-actions button {
+  background: #eee;
+  color: #444;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+.comment-actions button:hover {
+  background: #ccc;
+  transform: none;
+}
+.comment-actions form {
+  display: inline;
 }
 
 /* ===================================
-   COMMENT BOX
+  COMMENT BOX
 =================================== */
 .comment {
-  padding: 1rem;
+  padding: 1.2rem; /* Tăng padding */
   border-left: 5px solid #ccc;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   border-radius: 10px;
   background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Thêm box-shadow nhẹ */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .comment:hover {
   transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 .comment.good {
   border-color: #22c55e;
@@ -243,6 +318,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0.5rem;
+}
+.comment .author {
+  font-weight: 700;
+  color: #1a1a1a;
+  flex-grow: 1; /* Cho phép chiếm không gian */
 }
 .comment .rating {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
@@ -250,32 +331,152 @@
   padding: 5px 10px;
   border-radius: 8px;
   font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 1rem;
 }
 .comment .you {
   color: #e63946;
   font-weight: 600;
   margin-left: 5px;
 }
+.comment p {
+  margin: 10px 0;
+}
+.comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.comment-actions button,
+.comment-actions form button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-left: 8px;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.comment-actions button:first-child {
+  /* Nút Sửa */
+  background: #ffc107;
+  color: #444;
+}
+.comment-actions button:first-child:hover {
+  background: #e0ac00;
+}
+
+.comment-actions form button {
+  /* Nút Xóa */
+  background: #dc3545;
+  color: white;
+}
+.comment-actions form button:hover {
+  background: #c82333;
+}
+.comment-actions form {
+  margin: 0;
+}
 
 /* ===================================
-   MODAL
+  MODAL (Form Chỉnh sửa)
 =================================== */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5); /* Nền tối hơn */
   display: none;
+  z-index: 1000; /* Đảm bảo modal ở trên cùng */
 }
 .modal[open] {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.4s ease both;
+  animation: modalFadeIn 0.3s ease both;
 }
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .modal-box {
   background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
   padding: 2rem;
   border-radius: 16px;
-  width: 420px;
-  box-shadow: 0 12px 40px rgba(179, 77, 165, 0.15);
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 15px 50px rgba(179, 77, 165, 0.25);
+  animation: modalSlideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes modalSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-box h3 {
+  font-size: 1.8rem;
+  color: #972d88;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modal-box form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-actions {
+  display: flex; /* Bật Flexbox cho nhóm nút */
+  gap: 10px; /* Khoảng cách giữa các nút */
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  width: 50%;
+  margin-top: 0 !important; /* Ghi đè quy tắc cũ */
+}
+
+.modal-actions .btn-primary {
+  order: 1; /* Đảm bảo nút Lưu ở bên trái */
+  margin-right: 0;
+}
+
+.modal-actions button[type="button"] {
+  background: #e9ecef; /* Màu xám sáng */
+  color: #495057; /* Chữ tối */
+  border: 1px solid #ced4da;
+  box-shadow: none;
+  order: 2; /* Đảm bảo nút Hủy ở bên phải */
+}
+
+.modal-box input[type="range"] {
+  /* Tăng một chút chiều cao và độ nét */
+  height: 10px;
+}
+
+.modal-box input[type="range"]::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  background: #b34da5; /* Giữ màu tím hồng chủ đạo */
+  box-shadow: 0 2px 8px rgba(179, 77, 165, 0.5); /* Thêm shadow rõ nét hơn */
+}
+
+/* ===================================
+  RESPONSIVE
+=================================== */
+@media (max-width: 992px) {
+  .perfume-grid {
+    grid-template-columns: 1fr; /* Stack cột trên màn hình nhỏ */
+  }
 }

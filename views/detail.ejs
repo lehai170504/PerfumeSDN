@@ -156,13 +156,15 @@
                   />
                   <label>Bình luận</label>
                   <textarea name="content"><%= comment.content %></textarea>
-                  <button type="submit" class="btn btn-primary">Lưu</button>
-                  <button
-                    type="button"
-                    onclick="document.getElementById('editModal_<%= comment._id %>').close()"
-                  >
-                    Hủy
-                  </button>
+                  <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button
+                      type="button"
+                      onclick="document.getElementById('editModal_<%= comment._id %>').close()"
+                    >
+                      Hủy
+                    </button>
+                  </div>
                 </form>
               </div>
             </dialog>

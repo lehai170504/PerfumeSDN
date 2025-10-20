@@ -2,9 +2,6 @@
 const Brand = require("../models/Brand");
 const sendResponse = require("../middleware/responseHandler");
 
-/* ===================================================
- * 🧠 SHARED LOGIC — dùng được cho EJS & API
- * =================================================== */
 exports.findAllBrands = async () => {
   try {
     return await Brand.find();
@@ -22,10 +19,6 @@ exports.findBrandById = async (id) => {
     return null;
   }
 };
-
-/* ===================================================
- * ⚙️ API CONTROLLERS — dùng cho Swagger / API routes
- * =================================================== */
 
 // GET ALL BRANDS
 exports.getAllBrands = async (req, res, next) => {
@@ -56,10 +49,7 @@ exports.createBrand = async (req, res, next) => {
 
     // 💡 Logic cho Web Route (Redirect)
     if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-      req.session.message = {
-        type: "success",
-        text: "Tạo thương hiệu mới thành công!",
-      };
+      req.flash("success", "Tạo thương hiệu mới thành công!");
       return res.redirect("/admin/manage_brands");
     }
 
@@ -69,10 +59,7 @@ exports.createBrand = async (req, res, next) => {
     if (err.name === "ValidationError" || err.code === 11000) {
       // 💡 Logic cho Web Route (Error Redirect)
       if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-        req.session.message = {
-          type: "error",
-          text: "Dữ liệu không hợp lệ hoặc Tên thương hiệu đã tồn tại.",
-        };
+        req.flash("error", "Tạo thương hiệu mới thất bại!");
         return res.redirect("/admin/manage_brands");
       }
 
@@ -103,14 +90,10 @@ exports.updateBrand = async (req, res, next) => {
     if (!brand) {
       // 💡 Logic cho Web Route (Error Redirect)
       if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-        req.session.message = {
-          type: "error",
-          text: "Không tìm thấy thương hiệu để cập nhật!",
-        };
+        req.flash("error", "Cập nhật thương hiệu thất bại!");
         return res.redirect("/admin/manage_brands");
       }
 
-      // ⚙️ Logic cho API (JSON Error)
       return sendResponse(
         res,
         404,
@@ -121,10 +104,7 @@ exports.updateBrand = async (req, res, next) => {
 
     // 💡 Logic cho Web Route (Redirect)
     if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-      req.session.message = {
-        type: "success",
-        text: "Cập nhật thương hiệu thành công!",
-      };
+      req.flash("success", "Cập nhật thương hiệu thành công!");
       return res.redirect("/admin/manage_brands");
     }
 
@@ -149,20 +129,14 @@ exports.deleteBrand = async (req, res, next) => {
 
     if (!brand) {
       if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-        req.session.message = {
-          type: "error",
-          text: "Không tìm thấy thương hiệu để xóa.",
-        };
+        req.flash("error", "Không tìm thấy thương hiệu để xóa.");
         return res.redirect("/admin/manage_brands");
       }
       return sendResponse(res, 404, false, "Không tìm thấy thương hiệu để xóa");
     }
 
     if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-      req.session.message = {
-        type: "success",
-        text: "Xóa thương hiệu thành công!",
-      };
+      req.flash("success", "Xóa thương hiệu thành công!");
       return res.redirect("/admin/manage_brands");
     }
     return sendResponse(

@@ -10,7 +10,6 @@ const {
   updatePerfume,
   deletePerfume,
   searchPerfumes,
-  getPerfumesByBrand,
 } = require("../controllers/perfumeController");
 
 const createPerfumeSchema = require("../validations/perfume/createPerfume.schema");
@@ -79,29 +78,6 @@ router
  *         description: Lỗi server
  */
 router.get("/search", searchPerfumes);
-
-/**
- * @swagger
- * /perfumes/brand/{brandId}:
- *   get:
- *     summary: Lấy danh sách nước hoa theo thương hiệu
- *     tags: [Perfumes]
- *     parameters:
- *       - in: path
- *         name: brandId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID của thương hiệu
- *     responses:
- *       200:
- *         description: Danh sách nước hoa theo thương hiệu
- *       400:
- *         description: ID không hợp lệ hoặc thiếu
- *       500:
- *         description: Lỗi server
- */
-router.get("/brand/:brandId", getPerfumesByBrand);
 
 /**
  * @swagger

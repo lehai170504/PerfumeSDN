@@ -1,272 +1,261 @@
-/* ===============================
-   🌐 Tổng thể Layout
-================================= */
-.container {
+/* =============================
+   👥 Quản lý Thành viên - CSS Thuần
+============================= */
+
+.members-container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 40px 20px;
   font-family: "Segoe UI", Tahoma, sans-serif;
-  color: #2c3e50;
-  background-color: #f9fafc;
+  color: #333;
 }
 
 .page-title {
-  font-size: 2rem;
+  font-size: 26px;
   font-weight: 700;
-  color: #2c3e50;
-  border-bottom: 3px solid #3498db;
-  padding-bottom: 0.5rem;
-  margin-bottom: 2rem;
-  text-align: left;
+  color: #222;
+  margin-bottom: 24px;
 }
 
-/* ===============================
-   🔘 Nút (Buttons)
-================================= */
-.btn {
-  display: inline-block;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 600;
-}
-
-.btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.btn-primary {
-  background-color: #3498db;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #2980b9;
-}
-
-.btn-cancel {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.btn-cancel:hover {
-  background-color: #c0392b;
-}
-
-.btn-secondary {
-  background-color: #95a5a6;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #7f8c8d;
-}
-
-/* ===============================
-   ⚠️ Alert thông báo
-================================= */
+/* ====== Alert Styles ====== */
 .alert {
-  padding: 0.8rem 1rem;
+  padding: 12px 16px;
   border-radius: 6px;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-weight: 600;
+  margin-bottom: 16px;
+  font-size: 15px;
 }
 
 .alert-success {
-  background-color: #d4edda;
-  color: #155724;
+  background: #e6ffed;
+  color: #187a2f;
+  border: 1px solid #b7e5c0;
 }
 
 .alert-error {
-  background-color: #f8d7da;
-  color: #721c24;
+  background: #ffecec;
+  color: #b00020;
+  border: 1px solid #f5b4b4;
 }
 
 .alert-info {
-  background-color: #d1ecf1;
-  color: #0c5460;
+  background: #eaf4ff;
+  color: #004a99;
+  border: 1px solid #b9d5ff;
 }
 
-/* ===============================
-   📋 Bảng dữ liệu
-================================= */
+/* ====== Buttons ====== */
+.btn {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: 0.25s;
+}
+
+.btn-secondary {
+  background-color: #3a67b1;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #305b9d;
+}
+
+.btn-light {
+  background-color: #eaeaea;
+  color: #333;
+}
+
+.btn-light:hover {
+  background-color: #dcdcdc;
+}
+
+/* ====== Table ====== */
 .table-container {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  margin-top: 24px;
   overflow-x: auto;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  border: 1px solid #ddd;
+  background: #fff;
 }
 
 .data-table th,
 .data-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  border: 1px solid #ddd;
+  padding: 10px 14px;
   text-align: left;
+  font-size: 15px;
 }
 
 .data-table th {
-  background-color: #f8f9fa;
-  color: #2c3e50;
-  font-weight: 700;
+  background: #f5f6f9;
+  font-weight: 600;
 }
 
 .data-table tr:hover {
-  background-color: #f4f7fb;
-  transition: background 0.2s;
+  background: #f9f9fb;
 }
 
-.data-table img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-/* ===============================
-   🏷️ Badge (Vai trò / Trạng thái)
-================================= */
+/* ====== Badges ====== */
 .badge {
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
-  font-weight: 600;
-  color: #fff;
-  font-size: 0.85rem;
   display: inline-block;
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
+/* Màu nổi bật cho Admin */
 .badge-admin {
-  background-color: #e74c3c;
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
 }
 
 .badge-member {
-  background-color: #3498db;
+  background-color: #f5f5f5;
+  color: #0b1420;
+  border: 1px solid #d1d5db;
 }
 
-.badge-staff {
-  background-color: #f1c40f;
-  color: #2c3e50;
+/* Hiệu ứng hover nhẹ */
+.badge-admin:hover {
+  background-color: #bfdbfe;
 }
 
-/* ===============================
-   🪟 Modal (Hộp thoại)
-================================= */
+.badge-member:hover {
+  background-color: #e5e7eb;
+}
+
+/* ====== Modal ====== */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.45);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-.modal.active {
+.modal.show {
   display: flex;
+  animation: fadeIn 0.25s ease;
 }
 
 .modal-content {
   background: #fff;
-  padding: 2rem;
   border-radius: 10px;
+  padding: 28px 32px;
   width: 100%;
-  max-width: 520px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.25s ease-in-out;
+  max-width: 460px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  animation: scaleIn 0.25s ease;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 8px;
+}
+
+.page-link {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.page-link:hover {
+  background-color: #f0f0f0;
+}
+
+.page-link.active {
+  background-color: #3a67b1;
+  color: white;
+  border-color: #3a67b1;
 }
 
 @keyframes fadeIn {
   from {
-    transform: translateY(-20px);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
     opacity: 1;
   }
 }
 
-.modal-title {
-  text-align: center;
-  font-size: 1.5rem;
-  color: #2c3e50;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.modal-actions {
+/* ====== Form ====== */
+.form-grid {
   display: flex;
-  justify-content: space-between;
-  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-/* ===============================
-   📝 Form nhập liệu
-================================= */
 .form-group {
-  margin-bottom: 1rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.form-group label {
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-  color: #2c3e50;
+.form-group.full {
+  flex-basis: 100%;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 0.6rem 0.8rem;
-  border-radius: 6px;
+label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+input {
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+input:focus {
+  border-color: #3a67b1;
   outline: none;
-  transition: border 0.2s;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: #3498db;
+input.readonly {
+  background: #f5f5f5;
+  color: #3a67b1;
+  font-weight: 600;
 }
 
-.form-actions {
+.modal-actions {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 1.5rem;
-}
-
-/* ===============================
-   🔧 Utility (Tiện ích nhỏ)
-================================= */
-.text-center {
-  text-align: center;
-}
-
-.text-muted {
-  color: #7f8c8d;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
-}
-
-.hidden {
-  display: none;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
 }

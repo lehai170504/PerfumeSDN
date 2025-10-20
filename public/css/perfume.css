@@ -1,4 +1,4 @@
-/* ==== Tổng thể Layout ==== */
+/* ==== Tổng thể Layout (Giữ nguyên) ==== */
 .container {
   max-width: 1100px;
   margin: 40px auto;
@@ -23,7 +23,7 @@
   margin-bottom: 20px;
 }
 
-/* ==== Bảng dữ liệu ==== */
+/* ==== Bảng dữ liệu (Giữ nguyên) ==== */
 .table-wrapper {
   overflow-x: auto;
 }
@@ -61,7 +61,7 @@
   object-fit: cover;
 }
 
-/* ==== Nút (Buttons) ==== */
+/* ==== Nút (Buttons) (Giữ nguyên) ==== */
 .btn {
   padding: 8px 14px;
   border: none;
@@ -69,11 +69,13 @@
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 600;
-  transition: opacity 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .btn:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
@@ -83,7 +85,7 @@
 
 .btn-warning {
   background-color: #facc15;
-  color: #78350f;
+  color: #78350f; /* Giữ màu chữ đậm để tương phản tốt */
 }
 
 .btn-error {
@@ -101,7 +103,7 @@
   font-size: 0.8rem;
 }
 
-/* ==== Badge ==== */
+/* ==== Badge (Tinh chỉnh) ==== */
 .badge {
   display: inline-block;
   padding: 4px 8px;
@@ -112,32 +114,67 @@
 }
 
 .badge-warning {
-  background-color: #f59e0b;
+  background-color: #f59e0b; /* Màu vàng cam sẫm hơn một chút */
+  color: #fff; /* Đảm bảo màu chữ trắng để dễ đọc */
 }
 
 .badge-info {
   background-color: #2563eb;
 }
 
-/* ==== Modal ==== */
+/* ====================================
+ * ==== MODAL & FORM (Tối ưu khoảng cách) ====
+ * ==================================== */
+
+/* ==== Modal (Giữ nguyên logic) ==== */
 .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17, 24, 39, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
   border: none;
   border-radius: 10px;
-  padding: 0;
+}
+
+.modal:not([open]) {
+  display: none;
 }
 
 .modal-box {
   background: #fff;
-  padding: 25px 30px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 100%;
+  transition: transform 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-title {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   color: #1e3a8a;
+  text-align: center;
 }
 
 .modal-title.warning {
@@ -145,17 +182,21 @@
 }
 
 .modal-actions {
-  margin-top: 20px;
+  margin-top: 30px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 10px;
 }
 
-/* ==== Form ==== */
+.modal-actions .btn {
+  min-width: 100px;
+}
+
+/* ==== Form (Giữ nguyên logic grid, tối ưu input) ==== */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  gap: 20px;
 }
 
 .form-group {
@@ -170,32 +211,35 @@
 label {
   font-weight: 600;
   color: #374151;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
 }
 
 input,
 select,
 textarea {
-  padding: 10px 12px;
+  padding: 12px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: #2563eb;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   outline: none;
 }
 
 textarea {
   resize: vertical;
-  min-height: 90px;
+  min-height: 120px;
 }
 
-/* ==== Alert ==== */
+/* ==== Alert (Giữ nguyên) ==== */
 .alert {
   padding: 12px 16px;
   border-radius: 6px;
@@ -216,7 +260,7 @@ textarea {
   border: 1px solid #b91c1c;
 }
 
-/* ==== Text ==== */
+/* ==== Text (Tạo thêm utility cho form) ==== */
 .text-center {
   text-align: center;
 }
@@ -225,6 +269,118 @@ textarea {
   color: #6b7280;
 }
 
+/* ✅ Thêm style cho link ảnh cũ trong form chỉnh sửa */
+.text-xs {
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 4px;
+}
+
+.text-xs a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
 .inline-form {
   display: inline;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-buttons .btn {
+  flex: 1;
+  min-width: 80px;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+td .action-buttons {
+  justify-content: center;
+}
+
+.action-buttons .btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-box {
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6;
+}
+
+.modal-box::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-box::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 10px;
+}
+.modal-box::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  background-color: #ffffff;
+  transition: all 0.25s ease;
+}
+
+.pagination a:hover {
+  background-color: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.pagination a.btn-active {
+  background-color: #1e3a8a;
+  color: #fff;
+  border-color: #1e3a8a;
+  box-shadow: 0 2px 6px rgba(30, 58, 138, 0.25);
+}
+
+.pagination a.btn-outline {
+  background-color: #f9fafb;
+  color: #1e3a8a;
+  border-color: #cbd5e1;
+}
+
+.pagination a.btn-outline:hover {
+  background-color: #1e3a8a;
+  color: #fff;
+  border-color: #1e3a8a;
+}
+
+/* Form 2 cột trên desktop, 1 cột trên mobile */
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }

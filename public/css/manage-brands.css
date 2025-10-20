@@ -134,6 +134,23 @@
   background-color: #c62828;
 }
 
+.action-buttons {
+  display: flex; /* Sử dụng Flexbox để căn chỉnh các nút */
+  gap: 8px; /* Khoảng cách giữa các nút */
+  align-items: center;
+}
+
+/* Form Xóa cần được căn chỉnh nội tuyến (inline) */
+.action-buttons .inline {
+  display: contents; /* Đảm bảo form không phá vỡ bố cục flex */
+}
+
+/* Tăng nhẹ kích thước của các nút hành động nhỏ để dễ bấm hơn */
+.brand-table .btn-xs {
+  padding: 6px 12px; /* Tăng padding nhẹ */
+  font-size: 0.85rem;
+}
+
 /* =============================
    ⚠️ Thông báo (Alerts)
 ============================= */
@@ -243,6 +260,32 @@
   margin-top: 10px;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 8px;
+}
+
+.page-link {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.page-link:hover {
+  background-color: #f0f0f0;
+}
+
+.page-link.active {
+  background-color: #c59dd8;
+  color: white;
+  border-color: #c59dd8;
+}
+
 /* =============================
    📱 Responsive
 ============================= */
@@ -264,5 +307,9 @@
   .brand-table td {
     padding: 8px 10px;
     font-size: 0.9rem;
+  }
+
+  .action-buttons {
+    gap: 6px; /* Giảm khoảng cách nhẹ trên di động */
   }
 }
