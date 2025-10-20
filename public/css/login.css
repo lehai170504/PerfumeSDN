@@ -1,4 +1,6 @@
-/* ==== TỔNG THỂ ==== */
+/* ================================
+   🌸 TỔNG THỂ
+================================ */
 .login-page {
   display: flex;
   align-items: center;
@@ -9,7 +11,9 @@
   font-family: "Segoe UI", sans-serif;
 }
 
-/* ==== KHỐI CHÍNH ==== */
+/* ================================
+   🧭 KHỐI CHÍNH
+================================ */
 .login-hero {
   text-align: center;
   max-width: 420px;
@@ -29,7 +33,9 @@
   margin-bottom: 25px;
 }
 
-/* ==== FORM CARD ==== */
+/* ================================
+   💎 FORM CARD
+================================ */
 .login-card {
   background: #ffffff;
   padding: 32px 28px;
@@ -49,6 +55,10 @@ form {
   gap: 18px;
 }
 
+/* ================================
+   🚨 THÔNG BÁO
+================================ */
+
 /* ==== THÔNG BÁO LỖI ==== */
 .alert-error {
   background-color: #fee2e2;
@@ -60,7 +70,20 @@ form {
   text-align: left;
 }
 
-/* ==== FORM GROUP ==== */
+/* ==== THÔNG BÁO THÀNH CÔNG ==== */
+.alert-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #059669;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+/* ================================
+   📝 FORM GROUP
+================================ */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -87,7 +110,9 @@ input:focus {
   outline: none;
 }
 
-/* ==== NÚT ĐĂNG NHẬP ==== */
+/* ================================
+   🔘 NÚT ĐĂNG NHẬP
+================================ */
 .btn-login {
   background-color: #9333ea;
   color: #fff;
@@ -109,7 +134,9 @@ input:focus {
   transform: translateY(1px);
 }
 
-/* ==== LINK ĐĂNG KÝ ==== */
+/* ================================
+   🔗 LINK ĐĂNG KÝ
+================================ */
 .register-link {
   margin-top: 14px;
   font-size: 0.95rem;
@@ -128,7 +155,9 @@ input:focus {
   text-decoration: underline;
 }
 
-/* ==== RESPONSIVE ==== */
+/* ================================
+   📱 RESPONSIVE
+================================ */
 @media (max-width: 480px) {
   .login-card {
     padding: 26px 22px;

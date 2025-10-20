@@ -39,19 +39,58 @@ const checkSingleFeedback = async (req, res, next) => {
 exports.postComment = [
   checkSingleFeedback,
   async (req, res, next) => {
+    const isAPIRequest = req.headers.accept?.includes("json");
+    const perfumeId = req.perfume ? req.perfume._id : req.params.perfumeId;
+
     try {
-      const perfume = req.perfume;
-
-      // Kiểm tra và validate dữ liệu
-      if (!req.body.rating || req.body.rating < 1 || req.body.rating > 3) {
-        return sendResponse(res, 400, false, "Rating must be between 1 and 3.");
+      // 0. Kiểm tra ID
+      if (!perfumeId) {
+        const message = "Không tìm thấy ID nước hoa để đăng bình luận.";
+        if (isAPIRequest) {
+          return sendResponse(res, 400, false, message);
+        } else {
+          req.flash("error", message);
+          return res.redirect("back");
+        }
       }
+
+      // 1. Chỉ cho phép member
+      if (!req.member || req.member.isAdmin === true) {
+        const message = "Chỉ thành viên mới được phép đăng bình luận.";
+        if (isAPIRequest) return sendResponse(res, 403, false, message);
+        req.flash("error", message);
+        return res.redirect(`/perfumes/${perfumeId}`);
+      }
+
+      // 2. Kiểm tra rating
+      const rating = parseInt(req.body.rating);
+      if (!rating || rating < 1 || rating > 3) {
+        const message = "Rating phải nằm trong khoảng từ 1 đến 3.";
+        if (isAPIRequest) return sendResponse(res, 400, false, message);
+        req.flash("error", message);
+        return res.redirect(`/perfumes/${perfumeId}`);
+      }
+
+      // 3. Kiểm tra nội dung
       if (!req.body.content) {
-        return sendResponse(res, 400, false, "Comment content is required.");
+        const message = "Nội dung bình luận là bắt buộc.";
+        if (isAPIRequest) return sendResponse(res, 400, false, message);
+        req.flash("error", message);
+        return res.redirect(`/perfumes/${perfumeId}`);
       }
 
+      // 4. Lấy perfume
+      const perfume = await Perfume.findById(perfumeId);
+      if (!perfume) {
+        const message = "Không tìm thấy nước hoa.";
+        if (isAPIRequest) return sendResponse(res, 404, false, message);
+        req.flash("error", message);
+        return res.redirect("back");
+      }
+
+      // 5. Lưu comment
       const newComment = new Comment({
-        rating: req.body.rating,
+        rating,
         content: req.body.content,
         author: req.member._id,
       });
@@ -60,16 +99,20 @@ exports.postComment = [
       perfume.comments.push(savedComment._id);
       await perfume.save();
 
-      // Trả về comment đã tạo
-      return sendResponse(
-        res,
-        201,
-        true,
-        "Comment posted successfully",
-        savedComment
-      );
+      const successMessage = "Đăng bình luận thành công.";
+      if (isAPIRequest) {
+        return sendResponse(res, 201, true, successMessage, savedComment);
+      } else {
+        req.flash("success", successMessage);
+        return res.redirect(`/perfumes/${perfumeId}#feedback-section`);
+      }
     } catch (err) {
-      next(err);
+      console.error("❌ Lỗi khi đăng bình luận:", err);
+      if (isAPIRequest) next(err);
+      else {
+        req.flash("error", "Đã xảy ra lỗi hệ thống khi đăng bình luận.");
+        return res.redirect("back");
+      }
     }
   },
 ];
@@ -80,14 +123,14 @@ exports.updateComment = async (req, res, next) => {
     const { perfumeId, commentId } = req.params;
     const isJsonRequest = req.headers.accept?.includes("json");
 
-    // 1. Tìm và xác thực quyền sở hữu Comment
     const comment = await Comment.findOne({
       _id: commentId,
-      author: req.member._id, // Đảm bảo người dùng hiện tại là tác giả
+      author: req.member._id,
     });
 
     if (!comment) {
-      const message = "Comment not found or access denied.";
+      const message =
+        "Bình luận không tìm thấy hoặc quyền truy cập bị từ chối.";
       if (isJsonRequest) {
         return sendResponse(res, 404, false, message);
       } else {
@@ -99,7 +142,7 @@ exports.updateComment = async (req, res, next) => {
     // 2. Xác thực Comment có thuộc về Perfume này
     const perfume = await Perfume.findById(perfumeId);
     if (!perfume || !perfume.comments.includes(commentId)) {
-      const message = "Comment not linked to this perfume.";
+      const message = "Bình luận không liên kết với nước hoa này.";
       if (isJsonRequest) {
         return sendResponse(res, 404, false, message);
       } else {
@@ -112,7 +155,7 @@ exports.updateComment = async (req, res, next) => {
     if (req.body.rating !== undefined) {
       const rating = parseInt(req.body.rating);
       if (rating < 1 || rating > 3 || isNaN(rating)) {
-        const message = "Rating must be between 1 and 3.";
+        const message = "Đánh giá phải từ 1 đến 3.";
         if (isJsonRequest) {
           return sendResponse(res, 400, false, message);
         } else {
@@ -131,7 +174,7 @@ exports.updateComment = async (req, res, next) => {
     // 5. Lưu và Phản hồi
     await comment.save();
 
-    const successMessage = "Comment updated successfully";
+    const successMessage = "Bình luận được cập nhật thành công.";
     if (isJsonRequest) {
       return sendResponse(res, 200, true, successMessage, comment);
     } else {
@@ -154,7 +197,8 @@ exports.deleteComment = async (req, res, next) => {
     });
 
     if (!deletedComment) {
-      const message = "Comment not found or access denied.";
+      const message =
+        "Bình luận không tìm thấy hoặc quyền truy cập bị từ chối.";
       if (isJsonRequest) {
         return sendResponse(res, 404, false, message);
       } else {
@@ -172,7 +216,7 @@ exports.deleteComment = async (req, res, next) => {
     }
 
     // 3. Phản hồi
-    const successMessage = "Comment deleted successfully";
+    const successMessage = "Bình luận được xóa thành công.";
     if (isJsonRequest) {
       // Phản hồi thành công cho API
       return sendResponse(res, 200, true, successMessage);

@@ -22,9 +22,6 @@ const registerSchema = Joi.object({
     "string.min": `Mật khẩu phải có ít nhất {#limit} ký tự.`,
     "any.required": `Mật khẩu là bắt buộc.`,
   }),
-
-  // AdminKey: chỉ cần khi tạo admin
-  adminKey: Joi.string().optional(),
 });
 
 module.exports = registerSchema;

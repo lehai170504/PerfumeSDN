@@ -393,6 +393,53 @@
   }
 }
 
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  position: relative; /* Dùng cho nút đóng */
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
+.alert-error {
+  /* Hoặc .alert-danger */
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.alert p {
+  margin: 0;
+  padding-right: 25px; /* Tạo khoảng trống cho nút đóng */
+}
+
+.close-btn {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: bold;
+  color: inherit;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.close-btn:hover {
+  opacity: 1;
+}
+
 @media (max-width: 480px) {
   .page-title {
     font-size: 1.8rem;

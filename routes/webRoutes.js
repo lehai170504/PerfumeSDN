@@ -14,6 +14,9 @@ const Member = require("../models/Member");
 const Perfume = require("../models/Perfume");
 const getHome = async (req, res, next) => {
   try {
+    const errors = req.flash("error");
+    const successMessages = req.flash("success");
+
     const brands = await Brand.find().select("_id brandName").lean();
     const perfumes = await PerfumeController.getPerfumes(req);
 
@@ -28,6 +31,8 @@ const getHome = async (req, res, next) => {
       search: currentSearch,
       brandId: currentBrandId,
       pageCss: null,
+      error: errors.length > 0 ? errors[0] : null,
+      success: successMessages.length > 0 ? successMessages[0] : null,
     });
   } catch (error) {
     next(error);
@@ -69,17 +74,13 @@ router.get("/auth/register", (req, res) => {
   if (req.member) return res.redirect("/");
   res.render("auth/register", {
     title: "Đăng Ký",
-    messages: req.flash("error"),
     pageCss: null,
     error: errors.length > 0 ? errors[0] : null,
     success: successMessages.length > 0 ? successMessages[0] : null,
   });
 });
 
-router.post("/auth/register", AuthController.registerMember, (req, res) => {
-  req.flash("success", "Đăng ký thành công! Vui lòng đăng nhập.");
-  res.redirect("/auth/login");
-});
+router.post("/auth/register", AuthController.registerMember);
 
 router.get("/auth/login", (req, res) => {
   const errors = req.flash("error");
@@ -87,7 +88,6 @@ router.get("/auth/login", (req, res) => {
   if (req.member) return res.redirect("/");
   res.render("auth/login", {
     title: "Đăng Nhập",
-    messages: req.flash("error"),
     pageCss: null,
     error: errors.length > 0 ? errors[0] : null,
     success: successMessages.length > 0 ? successMessages[0] : null,
@@ -101,13 +101,29 @@ router.get("/auth/logout", AuthController.logoutMember);
 router.post("/auth/admin", protect, admin, AuthController.createAdmin);
 
 router.get("/member/profile", protect, async (req, res) => {
+  const successMessages = req.flash("success");
+  const errorMessages = req.flash("error");
+
+  let message = null;
+
+  if (errorMessages && errorMessages.length > 0) {
+    message = {
+      type: "error",
+      text: errorMessages[0],
+    };
+  } else if (successMessages && successMessages.length > 0) {
+    message = {
+      type: "success",
+      text: successMessages[0],
+    };
+  }
+
   res.render("member/profile", {
     title: "Thông Tin Cá Nhân",
     member: req.member,
-    messages: req.flash("success"),
+    message: message,
     loggedInUser: req.member || null,
-    pageCss: null,
-    message: null,
+    pageCss: "profile.css",
   });
 });
 
@@ -117,16 +133,6 @@ router.put(
   MemberController.updateMemberProfile
 );
 router.put("/member/password", protect, MemberController.changePassword);
-
-router.post(
-  "/perfumes/:perfumeId/comment",
-  protect,
-  CommentController.postComment,
-  (req, res) => {
-    req.flash("success", "Đã thêm bình luận và rating thành công!");
-    res.redirect(`/perfumes/${req.params.perfumeId}`);
-  }
-);
 
 router.get("/admin/dashboard", protect, admin, (req, res) => {
   res.render("admin/dashboard", {
@@ -303,6 +309,12 @@ router.delete("/admin/perfumes/:id", protect, admin, async (req, res, next) => {
 
 router.get("/", getHome);
 router.get("/perfumes/:id", getPerfumeDetails);
+
+router.post(
+  "/perfumes/:perfumeId/comment",
+  protect,
+  CommentController.postComment
+);
 
 // PUT /perfumes/:perfumeId/comment/:commentId - Sửa comment
 router.put(

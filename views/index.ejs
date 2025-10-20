@@ -1,6 +1,20 @@
 <%- include('partials/header', { title: 'Trang chủ', user: loggedInUser }) %>
 <%- include('partials/navbar', { user: loggedInUser }) %>
 
+<% if (success) { %>
+    <div class="alert alert-success">
+        <p><%= success %></p>
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+<% } %>
+
+<% if (error) { %>
+    <div class="alert alert-error">
+        <p><%= error %></p>
+        <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+<% } %>
+
 <div class="home-container">
   <h1 class="page-title">Bộ sưu tập Nước hoa</h1>
 

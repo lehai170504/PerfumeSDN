@@ -10,7 +10,9 @@
 
     <div class="login-card">
       <form action="/auth/login" method="POST">
-        <% if (error) { %>
+        <% if (success) { %>
+        <div class="alert-success"><%= success %></div>
+        <% } %> <% if (error) { %>
         <div class="alert-error"><%= error %></div>
         <% } %>
 
