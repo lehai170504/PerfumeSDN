@@ -1,7 +1,7 @@
 <%- include('../partials/header', { title: 'Quản lý Thương hiệu', user:
 loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
 
-<link rel="stylesheet" href="/css/manage-brands.css" />
+<link rel="stylesheet" href="manage-brands.css" />
 
 <div class="brands-container">
   <h1 class="page-title">Quản lý Thương hiệu (Brands)</h1>
@@ -12,10 +12,10 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
     </button>
   </div>
 
-  <% if (success_msg && success_msg.length > 0) { %>
-  <div class="alert alert-success mb-4"><%= success_msg %></div>
-  <% } %> <% if (error_msg && error_msg.length > 0) { %>
-  <div class="alert alert-error mb-4"><%= error_msg %></div>
+  <% if (success && success.length > 0) { %>
+  <div class="alert alert-success mb-4"><%= success[0] %></div>
+  <% } %> <% if (error && error.length > 0) { %>
+  <div class="alert alert-error mb-4"><%= error[0] %></div>
   <% } %>
 
   <div class="table-wrapper">
@@ -62,7 +62,6 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
       </tbody>
     </table>
 
-    <!-- Pagination -->
     <% if (totalPages > 1) { %>
     <div class="pagination">
       <% for (let i = 1; i <= totalPages; i++) { %>
@@ -83,7 +82,7 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   </div>
 </div>
 
-<!-- Modal Thêm -->
+<!-- Modal Thêm Brand -->
 <div id="addModal" class="modal">
   <div class="modal-content">
     <h3>Thêm Thương hiệu Mới</h3>
@@ -104,7 +103,7 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   </div>
 </div>
 
-<!-- Modal Chỉnh sửa -->
+<!-- Modal Chỉnh sửa Brand -->
 <div id="editModal" class="modal">
   <div class="modal-content">
     <h3>Chỉnh Sửa Thương hiệu</h3>

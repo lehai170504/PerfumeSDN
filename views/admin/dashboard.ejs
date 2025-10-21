@@ -4,6 +4,22 @@
 <link rel="stylesheet" href="/css/admin-dashboard.css" />
 
 <div class="dashboard-container">
+  <% if (success && success.length > 0) { %>
+  <div class="alert alert-success">
+    <p><%= success[0] %></p>
+    <span class="close-btn" onclick="this.parentElement.style.display='none';">
+      &times;
+    </span>
+  </div>
+  <% } %> <% if (error && error.length > 0) { %>
+  <div class="alert alert-error">
+    <p><%= error[0] %></p>
+    <span class="close-btn" onclick="this.parentElement.style.display='none';">
+      &times;
+    </span>
+  </div>
+  <% } %>
+
   <h1 class="page-title">
     Chào mừng, Admin <%= loggedInUser ? loggedInUser.name : 'Quản trị viên' %>!
   </h1>

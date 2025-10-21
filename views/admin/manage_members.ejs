@@ -1,29 +1,22 @@
 <%- include('../partials/header', { title: 'Quản lý Thành viên', user:
 loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
 
-<!-- ============================= -->
-<!-- 👥 QUẢN LÝ THÀNH VIÊN -->
-<!-- ============================= -->
 <div class="members-container">
   <h1 class="page-title">Danh sách Thành viên (Collectors)</h1>
 
-  <!-- Thông báo -->
-  <% if (messages) { %> <% if (messages.success && messages.success.length > 0)
-  { %> <% messages.success.forEach(msg => { %>
+  <% if (success && success.length > 0) { %>
   <div class="alert alert-success">
-    <span><%= msg %></span>
+    <span><%= success[0] %></span>
   </div>
-  <% }) %> <% } %> <% if (messages.error && messages.error.length > 0) { %> <%
-  messages.error.forEach(msg => { %>
+  <% } %> <% if (error && error.length > 0) { %>
   <div class="alert alert-error">
-    <span><%= msg %></span>
+    <span><%= error[0] %></span>
   </div>
-  <% }) %> <% } %> <% } %> <% if (member.isAdmin) { %>
+  <% } %> <% if (member && member.isAdmin) { %>
   <button id="openModalBtn" class="btn btn-secondary">
-    + Thêm tài khoản Admin mới  
+    + Thêm tài khoản Admin mới
   </button>
 
-  <!-- Modal thêm Admin -->
   <div id="addMemberModal" class="modal">
     <div class="modal-content">
       <h2 class="modal-title">Thêm Tài Khoản Admin Mới</h2>
@@ -84,7 +77,6 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   </div>
   <% } %>
 
-  <!-- Bảng thành viên -->
   <div class="table-container">
     <table class="data-table">
       <thead>
@@ -109,7 +101,6 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
               <%= memberItem.isAdmin ? 'Admin' : 'Member' %>
             </span>
           </td>
-
           <td>
             <%= new Date(memberItem.createdAt).toLocaleDateString('vi-VN') %>
           </td>
@@ -118,7 +109,7 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
       </tbody>
     </table>
   </div>
-  <!-- Pagination -->
+
   <% if (totalPages > 1) { %>
   <div class="pagination">
     <% for (let i = 1; i <= totalPages; i++) { %>
@@ -133,10 +124,10 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   <% } %>
 
   <div class="alert alert-info">
-    <span
-      >Chỉ <b>Admin</b> mới có thể thêm thành viên. Ordinary members không được
-      thao tác.</span
-    >
+    <span>
+      Chỉ <b>Admin</b> mới có thể thêm thành viên. Ordinary members không được
+      thao tác.
+    </span>
   </div>
 </div>
 

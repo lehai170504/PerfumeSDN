@@ -45,25 +45,33 @@ exports.getBrandById = async (req, res, next) => {
 // CREATE BRAND (API & WEB)
 exports.createBrand = async (req, res, next) => {
   try {
-    const brand = await Brand.create(req.body);
+    const brand = await Brand.create(req.body); // 💡 Logic cho Web Route (Redirect)
 
-    // 💡 Logic cho Web Route (Redirect)
     if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
       req.flash("success", "Tạo thương hiệu mới thành công!");
       return res.redirect("/admin/manage_brands");
-    }
+    } // ⚙️ Logic cho API (JSON Response)
 
-    // ⚙️ Logic cho API (JSON Response)
     return sendResponse(res, 201, true, "Tạo thương hiệu thành công", brand);
   } catch (err) {
+    let errorMessage = "Lỗi server không xác định. Vui lòng thử lại.";
+
+    if (err.name === "ValidationError") {
+      // Lấy thông báo lỗi đầu tiên của Mongoose Validation
+      errorMessage = Object.values(err.errors)[0].message;
+    } else if (err.code === 11000) {
+      // Lỗi trùng lặp (Duplicate Key Error)
+      errorMessage = "Tên thương hiệu đã tồn tại. Vui lòng chọn tên khác.";
+    }
+
     if (err.name === "ValidationError" || err.code === 11000) {
       // 💡 Logic cho Web Route (Error Redirect)
       if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-        req.flash("error", "Tạo thương hiệu mới thất bại!");
+        // 🎯 Cập nhật để gửi thông báo lỗi cụ thể
+        req.flash("error", errorMessage);
         return res.redirect("/admin/manage_brands");
-      }
+      } // ⚙️ Logic cho API (JSON Error)
 
-      // ⚙️ Logic cho API (JSON Error)
       return sendResponse(
         res,
         400,
@@ -90,7 +98,8 @@ exports.updateBrand = async (req, res, next) => {
     if (!brand) {
       // 💡 Logic cho Web Route (Error Redirect)
       if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-        req.flash("error", "Cập nhật thương hiệu thất bại!");
+        // 🎯 Sửa thông báo lỗi
+        req.flash("error", "Không tìm thấy thương hiệu để cập nhật!");
         return res.redirect("/admin/manage_brands");
       }
 
@@ -100,15 +109,13 @@ exports.updateBrand = async (req, res, next) => {
         false,
         "Không tìm thấy thương hiệu để cập nhật"
       );
-    }
+    } // 💡 Logic cho Web Route (Redirect)
 
-    // 💡 Logic cho Web Route (Redirect)
     if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
       req.flash("success", "Cập nhật thương hiệu thành công!");
       return res.redirect("/admin/manage_brands");
-    }
+    } // ⚙️ Logic cho API (JSON Response)
 
-    // ⚙️ Logic cho API (JSON Response)
     return sendResponse(
       res,
       200,
@@ -117,6 +124,20 @@ exports.updateBrand = async (req, res, next) => {
       brand
     );
   } catch (err) {
+    let errorMessage = "Cập nhật thương hiệu thất bại. Dữ liệu không hợp lệ.";
+
+    if (err.name === "ValidationError") {
+      errorMessage = Object.values(err.errors)[0].message;
+    } else if (err.code === 11000) {
+      errorMessage = "Tên thương hiệu đã tồn tại. Vui lòng chọn tên khác.";
+    }
+
+    if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+      // 🎯 Gửi thông báo lỗi cụ thể
+      req.flash("error", errorMessage);
+      return res.redirect("/admin/manage_brands");
+    }
+
     next(err);
   }
 };

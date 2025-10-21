@@ -17,17 +17,15 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
     </button>
   </div>
 
-  <% if (messages) { %> <% if (messages.success?.length > 0) { %> <%
-  messages.success.forEach(msg => { %>
+  <% if (success && success.length > 0) { %>
   <div class="alert alert-success">
-    <span><%= msg %></span>
+    <span><%= success[0] %></span>
   </div>
-  <% }) %> <% } %> <% if (messages.error?.length > 0) { %> <%
-  messages.error.forEach(msg => { %>
+  <% } %> <% if (error && error.length > 0) { %>
   <div class="alert alert-error">
-    <span><%= msg %></span>
+    <span><%= error[0] %></span>
   </div>
-  <% }) %> <% } %> <% } %>
+  <% } %>
 
   <div class="table-wrapper">
     <table class="perfume-table">
@@ -42,9 +40,14 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
           <th>Hành động</th>
         </tr>
       </thead>
-
       <tbody>
-        <% perfumes.forEach((perfume, index) => { %>
+        <% if (perfumes.length === 0) { %>
+        <tr>
+          <td colspan="7" class="text-center text-muted">
+            Chưa có nước hoa nào được tạo.
+          </td>
+        </tr>
+        <% } else { %> <% perfumes.forEach((perfume, index) => { %>
         <tr>
           <td><%= index + 1 %></td>
           <td>
@@ -84,35 +87,26 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
             </div>
           </td>
         </tr>
-        <% }) %> <% if (perfumes.length === 0) { %>
-        <tr>
-          <td colspan="7" class="text-center text-muted">
-            Chưa có nước hoa nào được tạo.
-          </td>
-        </tr>
-        <% } %>
+        <% }) %> <% } %>
       </tbody>
     </table>
 
-    <div class="pagination">
-      <% if (totalPages > 1) { %>
-      <div class="flex justify-center gap-2 mt-6">
-        <% for (let i = 1; i <= totalPages; i++) { %>
-        <a
-          href="/admin/manage_perfumes?page=<%= i %>"
-          class="btn btn-sm <%= currentPage === i ? 'btn-active btn-primary' : 'btn-outline' %>"
-        >
-          <%= i %>
-        </a>
-        <% } %>
-      </div>
+    <% if (totalPages > 1) { %>
+    <div class="pagination flex justify-center gap-2 mt-6">
+      <% for (let i = 1; i <= totalPages; i++) { %>
+      <a
+        href="/admin/manage_perfumes?page=<%= i %>"
+        class="btn btn-sm <%= currentPage === i ? 'btn-active btn-primary' : 'btn-outline' %>"
+      >
+        <%= i %>
+      </a>
       <% } %>
     </div>
+    <% } %>
   </div>
 </div>
-<!-- ============================= -->
-<!-- Modal: Thêm nước hoa mới -->
-<!-- ============================= -->
+
+<!-- Modal Thêm Nước hoa -->
 <dialog id="add_perfume_modal" class="modal">
   <div class="modal-box">
     <h3 class="modal-title">Thêm Nước hoa Mới</h3>
@@ -123,7 +117,6 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
       enctype="multipart/form-data"
       class="form-grid"
     >
-      <!-- Cột trái - phải, mỗi hàng 2 input -->
       <div class="form-group full">
         <label>Tên Nước hoa</label>
         <input type="text" name="perfumeName" required />
@@ -199,9 +192,7 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   </div>
 </dialog>
 
-<!-- ============================= -->
-<!-- Modal: Chỉnh sửa nước hoa -->
-<!-- ============================= -->
+<!-- Modal Chỉnh sửa Nước hoa -->
 <dialog id="edit_perfume_modal" class="modal">
   <div class="modal-box">
     <h3 class="modal-title warning">Chỉnh sửa Nước hoa</h3>

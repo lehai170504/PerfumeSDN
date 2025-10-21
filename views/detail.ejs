@@ -1,18 +1,15 @@
-<%- include('../partials/header', { title: 'Cập nhật Hồ sơ', user: loggedInUser,
+<%- include('partials/header', { title: perfume.perfumeName, user: loggedInUser,
 pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
 }) %>
 
 <div class="container">
-  <% if (message) { %>
-  <div
-    class="alert <%= message.type === 'success' ? 'alert-success' : 'alert-error' %>"
-  >
-    <%= message.text %>
-  </div>
+  <% if (success && success.length > 0) { %>
+  <div class="alert alert-success"><%= success[0] %></div>
+  <% } %> <% if (error && error.length > 0) { %>
+  <div class="alert alert-error"><%= error[0] %></div>
   <% } %>
 
   <div class="perfume-grid">
-    <!-- Sidebar -->
     <div class="sidebar">
       <img
         src="<%= perfume.uri %>"
@@ -22,21 +19,17 @@ pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
 
       <div class="info-box">
         <h3>Thông tin nhanh:</h3>
-
         <p>
           <strong>Giá:</strong>
           <span class="price"
             ><%= perfume.price.toLocaleString('vi-VN') %> VNĐ</span
           >
         </p>
-
         <p>
           <strong>Thương hiệu:</strong>
           <span class="badge brand"><%= perfume.brand.brandName %></span>
         </p>
-
         <p><strong>Dung tích:</strong> <%= perfume.volume %> ml</p>
-
         <p>
           <strong>Nồng độ:</strong>
           <% if (perfume.concentration === 'Extrait') { %>
@@ -45,7 +38,6 @@ pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
           <span class="badge normal"><%= perfume.concentration %></span>
           <% } %>
         </p>
-
         <p>
           <strong>Đối tượng:</strong>
           <span class="badge target"><%= perfume.targetAudience %></span>
@@ -53,7 +45,6 @@ pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
       </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main">
       <h1 class="perfume-name"><%= perfume.perfumeName %></h1>
       <p class="brand-line">Thương hiệu: <%= perfume.brand.brandName %></p>
@@ -72,13 +63,12 @@ pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
         </p>
       </section>
 
-      <!-- Comments & Feedback -->
       <section class="feedback">
         <h2>Đánh giá & Bình luận (<%= perfume.comments.length %>)</h2>
 
-        <% if (loggedInUser) { const userComment = perfume.comments.find( c =>
-        c.author && c.author._id.toString() === loggedInUser._id.toString() );
-        %> <% if (userComment) { %>
+        <% if (loggedInUser) { const userComment = perfume.comments.find(c =>
+        c.author && c.author._id.toString() === loggedInUser._id.toString()); %>
+        <% if (userComment) { %>
         <div class="alert alert-warning">
           Bạn đã đánh giá sản phẩm này. Hãy sửa bình luận bên dưới.
         </div>
@@ -99,8 +89,10 @@ pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
               checked
             />
             <label for="star3" title="Rất tốt - 3 sao">★</label>
+
             <input type="radio" id="star2" name="rating" value="2" required />
             <label for="star2" title="Tốt - 2 sao">★</label>
+
             <input type="radio" id="star1" name="rating" value="1" required />
             <label for="star1" title="Trung bình - 1 sao">★</label>
           </div>
@@ -155,7 +147,6 @@ pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
               </form>
             </div>
 
-            <!-- Modal chỉnh sửa -->
             <dialog id="editModal_<%= comment._id %>" class="modal">
               <div class="modal-box">
                 <h3>Chỉnh sửa bình luận</h3>

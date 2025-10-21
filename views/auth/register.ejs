@@ -14,8 +14,8 @@ pageCss: 'register.css' }) %> <%- include('../partials/navbar', { user: null })
 
     <div class="register-card">
       <form action="/auth/register" method="POST">
-        <% if (error) { %>
-        <div class="alert-error"><%= error %></div>
+        <% if (error && error.length > 0) { %>
+        <div class="alert-error"><%= error[0] %></div>
         <% } %>
 
         <div class="form-group">

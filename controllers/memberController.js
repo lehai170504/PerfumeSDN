@@ -84,7 +84,20 @@ const updateMemberProfile = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword } = req.body;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+    if (newPassword !== confirmNewPassword) {
+      if (req.headers.accept?.includes("text/html")) {
+        req.flash("error", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
+        return res.redirect("/member/profile");
+      }
+      return sendResponse(
+        res,
+        400,
+        false,
+        "Mật khẩu mới và xác nhận mật khẩu không khớp"
+      );
+    }
     const member = await Member.findById(req.member._id);
 
     if (!member) {

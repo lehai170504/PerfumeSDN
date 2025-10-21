@@ -1,33 +1,39 @@
-// middleware/validate.js (Sửa lại)
-
 const validate =
   (schema, property = "body") =>
   (req, res, next) => {
-    // 1. Chạy xác thực schema
-    // Bổ sung tham số property để hỗ trợ validate req.params hoặc req.query nếu cần
     const { error } = schema.validate(req[property], {
       abortEarly: false,
-    }); // 2. Kiểm tra nếu có lỗi
+    });
 
-    // ... (Phần logic xử lý lỗi giữ nguyên)
+    const isApiRequest = req.headers.accept?.includes("application/json");
 
     if (error) {
-      // 3. Xử lý và định dạng lỗi chi tiết
+      const firstErrorMessage = error.details[0].message.replace(/['"]+/g, "");
+
+      if (!isApiRequest) {
+        req.flash("error", firstErrorMessage);
+
+        return res.redirect(
+          req.originalUrl.includes("/admin") ? "/admin/manage_perfumes" : "back"
+        );
+      }
+
       const errors = error.details.map((detail) => {
         return {
           message: detail.message.replace(/['"]+/g, ""),
           field: detail.path[0],
           type: detail.type,
         };
-      }); // 4. Trả về phản hồi 400 Bad Request với mảng lỗi chi tiết
+      });
 
       return res.status(400).json({
         status: "error",
         message: "Dữ liệu không hợp lệ. Vui lòng kiểm tra các trường.",
-        errors: errors, // Mảng lỗi chi tiết
+        errors: errors,
       });
-    } // 5. Nếu không có lỗi, chuyển sang Controller
+    }
 
+    // Nếu không có lỗi, chuyển sang Controller
     next();
   };
 

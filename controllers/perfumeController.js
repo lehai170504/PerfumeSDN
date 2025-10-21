@@ -2,7 +2,6 @@ const Perfume = require("../models/Perfume");
 const Brand = require("../models/Brand");
 const sendResponse = require("../middleware/responseHandler");
 
-// ✅ [GET] /api/perfumes (HỖ TRỢ TÌM KIẾM VÀ LỌC)
 const getPerfumes = async (req, res) => {
   try {
     const { search, brandId } = req.query;
@@ -22,16 +21,15 @@ const getPerfumes = async (req, res) => {
     if (res) {
       return sendResponse(res, 200, true, "Danh sách nước hoa", perfumes);
     }
-    // Dành cho Web Route Controller
     return perfumes;
   } catch (error) {
     if (res) {
       return sendResponse(res, 500, false, "Lỗi server", null, error.message);
     }
-    throw error; // cho web route bắt lỗi qua next(error)
+    throw error;
   }
 };
-// ✅ [GET] /api/perfumes/:id - Lấy chi tiết 1 perfume
+
 const getPerfumeById = async (req, res) => {
   try {
     const perfume = await Perfume.findById(req.params.id)
@@ -56,10 +54,8 @@ const getPerfumeById = async (req, res) => {
 };
 
 const findPerfume = async (perfumeId) => {
-  // Kiểm tra tính hợp lệ của ID
   if (!perfumeId) return null;
 
-  // Logic truy vấn phức tạp (populate)
   return await Perfume.findById(perfumeId)
     .populate("brand", "brandName")
     .populate({
@@ -72,7 +68,6 @@ const findPerfume = async (perfumeId) => {
     });
 };
 
-// 🧠 [POST] /admin/perfumes — Tạo mới perfume (upload ảnh)
 const createPerfume = async (req, res, next) => {
   try {
     const {
@@ -88,8 +83,16 @@ const createPerfume = async (req, res, next) => {
 
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
+    const existingPerfume = await Perfume.findOne({ perfumeName: perfumeName });
+    if (existingPerfume) {
+      req.flash(
+        "error",
+        "Tên nước hoa này đã tồn tại. Vui lòng chọn tên khác."
+      );
+      return res.redirect("/admin/manage_perfumes");
+    }
+
     if (!imagePath) {
-      console.warn("⚠️ Không có ảnh tải lên!");
       req.flash("error", "Vui lòng tải lên hình ảnh sản phẩm!");
       return res.redirect("/admin/manage_perfumes");
     }
@@ -106,18 +109,23 @@ const createPerfume = async (req, res, next) => {
       uri: imagePath,
     });
 
-    console.log("✅ Tạo perfume thành công:", perfumeName);
     req.flash("success", "Tạo nước hoa mới thành công!");
 
     return res.redirect("/admin/manage_perfumes");
   } catch (error) {
-    console.error("❌ Lỗi khi tạo perfume:", error);
-    req.flash("error", "Đã xảy ra lỗi khi tạo nước hoa.");
-    next(error);
+    let errorMessage = "Đã xảy ra lỗi khi tạo nước hoa.";
+
+    if (error.name === "ValidationError") {
+      errorMessage = Object.values(error.errors)[0].message;
+    } else if (error.code === 11000) {
+      errorMessage = "Tên nước hoa đã tồn tại. Vui lòng chọn tên khác.";
+    }
+
+    req.flash("error", errorMessage);
+    return res.redirect("/admin/manage_perfumes");
   }
 };
 
-// 🧠 [PUT] /admin/perfumes/:id — Cập nhật perfume (có thể upload ảnh mới)
 const updatePerfume = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -134,15 +142,27 @@ const updatePerfume = async (req, res, next) => {
 
     const perfume = await Perfume.findById(id);
     if (!perfume) {
-      console.warn("⚠️ Không tìm thấy perfume ID:", id);
-      // SỬ DỤNG req.flash
       req.flash("error", "Không tìm thấy nước hoa để cập nhật!");
       return res.redirect("/admin/manage_perfumes");
-    } // 🖼️ Nếu có file upload thì thay ảnh, ngược lại giữ ảnh cũ
+    }
+
+    if (perfumeName && perfumeName !== perfume.perfumeName) {
+      const existingPerfume = await Perfume.findOne({
+        perfumeName: perfumeName,
+      });
+
+      if (existingPerfume && existingPerfume._id.toString() !== id) {
+        req.flash(
+          "error",
+          "Tên nước hoa này đã tồn tại. Vui lòng chọn tên khác."
+        );
+        return res.redirect("/admin/manage_perfumes");
+      }
+    }
 
     const newImagePath = req.file
       ? `/uploads/${req.file.filename}`
-      : perfume.uri; // 🧩 Cập nhật dữ liệu
+      : perfume.uri;
 
     perfume.perfumeName = perfumeName;
     perfume.brand = brandId;
@@ -156,18 +176,23 @@ const updatePerfume = async (req, res, next) => {
 
     await perfume.save();
 
-    console.log("✅ Cập nhật perfume thành công:", perfumeName);
     req.flash("success", "Cập nhật nước hoa thành công!");
 
     return res.redirect("/admin/manage_perfumes");
   } catch (error) {
-    console.error("❌ Lỗi khi cập nhật perfume:", error);
-    req.flash("error", "Đã xảy ra lỗi khi cập nhật nước hoa.");
-    next(error);
+    let errorMessage = "Đã xảy ra lỗi khi cập nhật nước hoa.";
+
+    if (error.name === "ValidationError") {
+      errorMessage = Object.values(error.errors)[0].message;
+    } else if (error.code === 11000) {
+      errorMessage = "Tên nước hoa đã tồn tại. Vui lòng chọn tên khác.";
+    }
+
+    req.flash("error", errorMessage);
+    return res.redirect("/admin/manage_perfumes");
   }
 };
 
-// 🧠 Xóa perfume
 const deletePerfume = async (req, res) => {
   try {
     const deletedPerfume = await Perfume.findByIdAndDelete(req.params.id);
@@ -180,13 +205,11 @@ const deletePerfume = async (req, res) => {
     req.flash("success", "Xóa nước hoa thành công.");
     return res.redirect("/admin/manage_perfumes");
   } catch (error) {
-    console.error("❌ Lỗi khi xóa perfume:", error);
     req.flash("error", "Đã xảy ra lỗi khi xóa nước hoa.");
     return res.redirect("/admin/manage_perfumes");
   }
 };
 
-// [Public] Tìm kiếm perfumes theo tên nước hoa, mô tả hoặc brand
 const searchPerfumes = async (req, res) => {
   try {
     const { keyword } = req.query;

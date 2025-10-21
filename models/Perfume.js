@@ -5,14 +5,18 @@ require("./Comment");
 
 const perfumeSchema = new Schema(
   {
-    perfumeName: { type: String, required: true },
+    perfumeName: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     uri: { type: String, required: true, unique: true },
     price: { type: Number, required: true },
-    concentration: { type: String, required: true }, // Extrait, EDP, EDT,...
+    concentration: { type: String, required: true },
     description: { type: String, required: true },
     ingredients: { type: String, required: true },
     volume: { type: Number, required: true },
-    targetAudience: { type: String, required: true }, // male, female, unisex
+    targetAudience: { type: String, required: true },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,

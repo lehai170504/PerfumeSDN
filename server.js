@@ -49,8 +49,8 @@ app.use(
 );
 app.use(flash());
 app.use((req, res, next) => {
-  res.locals.success_msg = req.flash("success");
-  res.locals.error_msg = req.flash("error");
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
   next();
 });
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));

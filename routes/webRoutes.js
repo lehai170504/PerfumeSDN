@@ -14,9 +14,6 @@ const Member = require("../models/Member");
 const Perfume = require("../models/Perfume");
 const getHome = async (req, res, next) => {
   try {
-    const errors = req.flash("error");
-    const successMessages = req.flash("success");
-
     const brands = await Brand.find().select("_id brandName").lean();
     const perfumes = await PerfumeController.getPerfumes(req);
 
@@ -31,8 +28,6 @@ const getHome = async (req, res, next) => {
       search: currentSearch,
       brandId: currentBrandId,
       pageCss: null,
-      error: errors.length > 0 ? errors[0] : null,
-      success: successMessages.length > 0 ? successMessages[0] : null,
     });
   } catch (error) {
     next(error);
@@ -69,28 +64,20 @@ const getPerfumeDetails = async (req, res, next) => {
   }
 };
 router.get("/auth/register", (req, res) => {
-  const errors = req.flash("error");
-  const successMessages = req.flash("success");
   if (req.member) return res.redirect("/");
   res.render("auth/register", {
     title: "Đăng Ký",
     pageCss: null,
-    error: errors.length > 0 ? errors[0] : null,
-    success: successMessages.length > 0 ? successMessages[0] : null,
   });
 });
 
 router.post("/auth/register", AuthController.registerMember);
 
 router.get("/auth/login", (req, res) => {
-  const errors = req.flash("error");
-  const successMessages = req.flash("success");
   if (req.member) return res.redirect("/");
   res.render("auth/login", {
     title: "Đăng Nhập",
     pageCss: null,
-    error: errors.length > 0 ? errors[0] : null,
-    success: successMessages.length > 0 ? successMessages[0] : null,
   });
 });
 
@@ -101,27 +88,9 @@ router.get("/auth/logout", AuthController.logoutMember);
 router.post("/auth/admin", protect, admin, AuthController.createAdmin);
 
 router.get("/member/profile", protect, async (req, res) => {
-  const successMessages = req.flash("success");
-  const errorMessages = req.flash("error");
-
-  let message = null;
-
-  if (errorMessages && errorMessages.length > 0) {
-    message = {
-      type: "error",
-      text: errorMessages[0],
-    };
-  } else if (successMessages && successMessages.length > 0) {
-    message = {
-      type: "success",
-      text: successMessages[0],
-    };
-  }
-
   res.render("member/profile", {
     title: "Thông Tin Cá Nhân",
     member: req.member,
-    message: message,
     loggedInUser: req.member || null,
     pageCss: "profile.css",
   });
@@ -193,8 +162,6 @@ router.get("/admin/manage_brands", protect, admin, async (req, res, next) => {
       brands,
       currentPage: page,
       totalPages: Math.ceil(totalBrands / perPage),
-      success_msg: req.flash("success"),
-      error_msg: req.flash("error"),
       loggedInUser: req.member || null,
       pageCss: null,
     });
@@ -248,9 +215,6 @@ router.get("/admin/manage_perfumes", protect, admin, async (req, res, next) => {
       .limit(perPage)
       .lean();
 
-    const successMessages = req.flash("success");
-    const errorMessages = req.flash("error");
-
     res.render("admin/manage_perfumes", {
       title: "Quản Lý Nước Hoa",
       perfumes,
@@ -259,10 +223,6 @@ router.get("/admin/manage_perfumes", protect, admin, async (req, res, next) => {
       totalPages: Math.ceil(totalPerfumes / perPage),
       loggedInUser: req.member || null,
       pageCss: null,
-      messages: {
-        success: successMessages,
-        error: errorMessages,
-      },
     });
   } catch (error) {
     next(error);
