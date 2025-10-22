@@ -37,4 +37,33 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+const checkLoggedIn = async (req, res, next) => {
+  let token = req.cookies.jwt;
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const redirectPath = decoded.isAdmin ? "/admin/dashboard" : "/";
+
+    req.flash("success", "Bạn đã đăng nhập rồi!");
+
+    return res.redirect(redirectPath);
+  } catch (error) {
+    console.error("Token hết hạn khi truy cập trang Login:", error.message);
+    res.clearCookie("jwt");
+    next();
+  }
+};
+
+const noCache = (req, res, next) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  next();
+};
+
+module.exports = { protect, checkLoggedIn, noCache };

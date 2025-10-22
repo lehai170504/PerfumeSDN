@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { protect } = require("../middleware/auth");
+const { protect, checkLoggedIn, noCache } = require("../middleware/auth");
 const { admin } = require("../middleware/admin");
 const Brand = require("../models/Brand");
 const AuthController = require("../controllers/authController");
@@ -28,6 +28,8 @@ const getHome = async (req, res, next) => {
       search: currentSearch,
       brandId: currentBrandId,
       pageCss: null,
+      success: req.flash("success"),
+      error: req.flash("error"),
     });
   } catch (error) {
     next(error);
@@ -73,11 +75,13 @@ router.get("/auth/register", (req, res) => {
 
 router.post("/auth/register", AuthController.registerMember);
 
-router.get("/auth/login", (req, res) => {
-  if (req.member) return res.redirect("/");
+router.get("/auth/login", noCache, checkLoggedIn, (req, res) => {
   res.render("auth/login", {
     title: "Đăng Nhập",
     pageCss: null,
+    success: req.flash("success"),
+    error: req.flash("error"),
+    user: null,
   });
 });
 
@@ -108,6 +112,8 @@ router.get("/admin/dashboard", protect, admin, (req, res) => {
     title: "Admin Dashboard",
     loggedInUser: req.member || null,
     pageCss: null,
+    success: req.flash("success"),
+    error: req.flash("error"),
   });
 });
 
