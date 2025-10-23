@@ -28,6 +28,14 @@ const protect = async (req, res, next) => {
     req.member = await Member.findById(decoded.id).select("-password");
     req.isAdmin = decoded.isAdmin; //
 
+    if (!req.member || req.member.isDeleted) {
+      console.error(
+        `Truy cập bị từ chối: User ID ${decoded.id} không tồn tại hoặc đã bị xóa.`
+      );
+      res.clearCookie("jwt");
+      return res.redirect("/auth/login");
+    }
+
     next();
   } catch (error) {
     console.error(error);

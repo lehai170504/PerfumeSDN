@@ -7,6 +7,7 @@ const methodOverride = require("method-override");
 const flash = require("connect-flash");
 const session = require("express-session");
 const checkUser = require("./middleware/userLoader");
+const cors = require("cors");
 
 // --- API Routes ---
 const authRoutes = require("./routes/auth");
@@ -27,6 +28,14 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
 
 // --- 1. Cấu hình Middleware cơ bản ---
 app.use(express.json());
