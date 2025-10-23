@@ -195,17 +195,22 @@ const updatePerfume = async (req, res, next) => {
 
 const deletePerfume = async (req, res) => {
   try {
-    const deletedPerfume = await Perfume.findByIdAndDelete(req.params.id);
+    const deletedPerfume = await Perfume.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: true },
+      { new: true }
+    );
 
     if (!deletedPerfume) {
-      req.flash("error", "Không tìm thấy nước hoa để xóa.");
+      req.flash("error", "Không tìm thấy nước hoa để ẩn/xóa mềm.");
       return res.redirect("/admin/manage_perfumes");
     }
 
-    req.flash("success", "Xóa nước hoa thành công.");
+    req.flash("success", "Ẩn/Xóa mềm nước hoa thành công.");
     return res.redirect("/admin/manage_perfumes");
   } catch (error) {
-    req.flash("error", "Đã xảy ra lỗi khi xóa nước hoa.");
+    req.flash("error", "Đã xảy ra lỗi khi ẩn/xóa mềm nước hoa.");
+    console.error("Error during soft delete:", error);
     return res.redirect("/admin/manage_perfumes");
   }
 };

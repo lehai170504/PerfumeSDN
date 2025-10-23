@@ -1,6 +1,7 @@
 // controllers/brandController.js
 const Brand = require("../models/Brand");
 const sendResponse = require("../middleware/responseHandler");
+const Perfume = require("../models/Perfume");
 
 exports.findAllBrands = async () => {
   try {
@@ -146,27 +147,59 @@ exports.updateBrand = async (req, res, next) => {
 exports.deleteBrand = async (req, res, next) => {
   try {
     const { brandId } = req.params;
-    const brand = await Brand.findByIdAndDelete(brandId);
 
-    if (!brand) {
+    const relatedDocumentsCount = await Perfume.countDocuments({
+      brand: brandId,
+    });
+
+    if (relatedDocumentsCount > 0) {
+      const errorMessage =
+        "Không thể xóa/ẩn thương hiệu này vì có sản phẩm liên quan đang sử dụng nó.";
+
       if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-        req.flash("error", "Không tìm thấy thương hiệu để xóa.");
+        req.flash("error", errorMessage);
         return res.redirect("/admin/manage_brands");
       }
-      return sendResponse(res, 404, false, "Không tìm thấy thương hiệu để xóa");
+      return sendResponse(res, 400, false, errorMessage);
+    }
+
+    const brand = await Brand.findByIdAndUpdate(
+      brandId,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!brand) {
+      const notFoundMessage = "Không tìm thấy thương hiệu để xóa/ẩn.";
+
+      if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+        req.flash("error", notFoundMessage);
+        return res.redirect("/admin/manage_brands");
+      }
+      return sendResponse(res, 404, false, notFoundMessage);
     }
 
     if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
-      req.flash("success", "Xóa thương hiệu thành công!");
+      req.flash("success", "Ẩn/Xóa mềm thương hiệu thành công!");
       return res.redirect("/admin/manage_brands");
     }
     return sendResponse(
       res,
       200,
       true,
-      `Đã xóa thương hiệu ${brand.brandName}`
+      `Đã ẩn/xóa mềm thương hiệu ${brand.brandName}`
     );
   } catch (err) {
+    if (err.name === "CastError") {
+      const castErrorMessage = "ID thương hiệu không hợp lệ.";
+
+      if (req.originalUrl.includes("/admin/brands") && !req.headersSent) {
+        req.flash("error", castErrorMessage);
+        return res.redirect("/admin/manage_brands");
+      }
+      return sendResponse(res, 400, false, castErrorMessage);
+    }
+
     next(err);
   }
 };

@@ -191,14 +191,20 @@ exports.deleteComment = async (req, res, next) => {
   try {
     const { perfumeId, commentId } = req.params;
     const isJsonRequest = req.headers.accept?.includes("json");
-    const deletedComment = await Comment.findOneAndDelete({
-      _id: commentId,
-      author: req.member._id,
-    });
 
-    if (!deletedComment) {
+    const updatedComment = await Comment.findOneAndUpdate(
+      {
+        _id: commentId,
+        author: req.member._id,
+        isDeleted: false,
+      },
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!updatedComment) {
       const message =
-        "Bình luận không tìm thấy hoặc quyền truy cập bị từ chối.";
+        "Bình luận không tìm thấy, đã bị xóa hoặc quyền truy cập bị từ chối.";
       if (isJsonRequest) {
         return sendResponse(res, 404, false, message);
       } else {
@@ -207,21 +213,16 @@ exports.deleteComment = async (req, res, next) => {
       }
     }
 
-    // 2. Xóa tham chiếu comment khỏi Perfume
     const perfume = await Perfume.findById(perfumeId);
     if (perfume) {
-      // Sử dụng .pull() của Mongoose để loại bỏ ID khỏi mảng
       perfume.comments.pull(commentId);
       await perfume.save();
     }
 
-    // 3. Phản hồi
-    const successMessage = "Bình luận được xóa thành công.";
+    const successMessage = "Bình luận được ẩn/xóa mềm thành công.";
     if (isJsonRequest) {
-      // Phản hồi thành công cho API
       return sendResponse(res, 200, true, successMessage);
     } else {
-      // Phản hồi thành công cho Web/EJS
       req.flash("success", successMessage);
       return res.redirect(`/perfumes/${perfumeId}#feedback-section`);
     }

@@ -82,6 +82,50 @@ const updateMemberProfile = async (req, res) => {
   }
 };
 
+const deleteMember = async (req, res) => {
+  try {
+    const { memberId } = req.params;
+
+    const member = await Member.findByIdAndUpdate(
+      memberId,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!member) {
+      const notFoundMessage = "Không tìm thấy thành viên để xóa/ẩn.";
+      if (req.headers.accept?.includes("text/html")) {
+        req.flash("error", notFoundMessage);
+        return res.redirect("/admin/manage_members");
+      }
+      return sendResponse(res, 404, false, notFoundMessage);
+    }
+
+    const successMessage = `Ẩn/Xóa mềm thành viên ${member.name} thành công.`;
+
+    if (req.headers.accept?.includes("text/html")) {
+      req.flash("success", successMessage);
+      return res.redirect("/admin/manage_members");
+    }
+    return sendResponse(res, 200, true, successMessage);
+  } catch (error) {
+    if (error.name === "CastError") {
+      const castErrorMessage = "ID thành viên không hợp lệ.";
+      if (req.headers.accept?.includes("text/html")) {
+        req.flash("error", castErrorMessage);
+        return res.redirect("/admin/manage_members");
+      }
+      return sendResponse(res, 400, false, castErrorMessage);
+    }
+
+    if (req.headers.accept?.includes("text/html")) {
+      req.flash("error", "Lỗi server! Vui lòng thử lại sau.");
+      return res.redirect("/admin/manage_members");
+    }
+    return sendResponse(res, 500, false, "Lỗi server", null, error.message);
+  }
+};
+
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmNewPassword } = req.body;
@@ -143,4 +187,5 @@ module.exports = {
   updateMemberProfile,
   changePassword,
   findAllMembers,
+  deleteMember,
 };

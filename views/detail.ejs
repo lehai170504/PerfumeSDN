@@ -72,7 +72,7 @@ pageCss: 'profile.css' }) %> <%- include('partials/navbar', { user: loggedInUser
         <div class="alert alert-warning">
           Bạn đã đánh giá sản phẩm này. Hãy sửa bình luận bên dưới.
         </div>
-        <% } else { %>
+        <% } else if (!loggedInUser.isAdmin) { %>
         <form
           action="/perfumes/<%= perfume._id %>/comment"
           method="POST"

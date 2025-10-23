@@ -20,7 +20,6 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   <div id="addMemberModal" class="modal">
     <div class="modal-content">
       <h2 class="modal-title">Thêm Tài Khoản Admin Mới</h2>
-
       <form
         id="addMemberForm"
         method="POST"
@@ -86,15 +85,19 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
           <th>Tên</th>
           <th>Role</th>
           <th>Ngày đăng ký</th>
+          <% if (member && member.isAdmin) { %>
+          <th>Hành động</th>
+          <% } %>
         </tr>
       </thead>
       <tbody>
-        <% members.forEach((memberItem, index) => { %>
+        <% members .filter(m => !m.isDeleted) // chỉ hiển thị tài khoản chưa xóa
+        .forEach((memberItem, index) => { %>
         <tr>
           <td><%= index + 1 %></td>
           <td><%= memberItem.email %></td>
           <td><%= memberItem.name %></td>
-          <td class="border px-4 py-2">
+          <td>
             <span
               class="badge <%= memberItem.isAdmin ? 'badge-admin' : 'badge-member' %>"
             >
@@ -104,6 +107,18 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
           <td>
             <%= new Date(memberItem.createdAt).toLocaleDateString('vi-VN') %>
           </td>
+
+          <% if (member && member.isAdmin) { %>
+          <td>
+            <form
+              action="/api/members/<%= memberItem._id %>?_method=DELETE"
+              method="POST"
+              onsubmit="return confirm('Xác nhận xóa thành viên <%= memberItem.name %>?');"
+            >
+              <button type="submit" class="btn btn-error btn-xs">Xóa</button>
+            </form>
+          </td>
+          <% } %>
         </tr>
         <% }) %>
       </tbody>
@@ -124,16 +139,15 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
   <% } %>
 
   <div class="alert alert-info">
-    <span>
-      Chỉ <b>Admin</b> mới có thể thêm thành viên. Ordinary members không được
-      thao tác.
-    </span>
+    <span>Chỉ <b>Admin</b> mới có thể thêm hoặc xóa thành viên.</span>
   </div>
 </div>
 
 <%- include('../partials/footer') %>
 
+<!-- Modal & Delete Logic -->
 <script>
+  // === Modal ===
   const modal = document.getElementById("addMemberModal");
   const openBtn = document.getElementById("openModalBtn");
   const closeBtn = document.getElementById("closeModalBtn");
@@ -145,4 +159,13 @@ loggedInUser }) %> <%- include('../partials/navbar', { user: loggedInUser }) %>
       if (e.target === modal) modal.classList.remove("show");
     });
   }
+
+  // === Soft Delete confirm ===
+  document.querySelectorAll(".delete-form").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const confirmed = confirm("Bạn có chắc muốn xóa mềm thành viên này?");
+      if (confirmed) form.submit();
+    });
+  });
 </script>

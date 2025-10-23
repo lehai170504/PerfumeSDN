@@ -10,6 +10,7 @@ const commentSchema = new Schema(
       ref: "Members",
       required: true,
     },
+    isDeleted: { type: Boolean, required: true, default: false },
   },
   { timestamps: true }
 );

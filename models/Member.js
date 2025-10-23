@@ -9,7 +9,8 @@ const memberSchema = new Schema(
     name: { type: String },
     YOB: { type: Number },
     gender: { type: String },
-    isAdmin: { type: Boolean, default: false }, // Default role is not Admin [cite: 16, 45, 69]
+    isAdmin: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, required: true, default: false },
   },
   { timestamps: true }
 );

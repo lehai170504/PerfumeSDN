@@ -28,6 +28,11 @@ const perfumeSchema = new Schema(
       ref: "Brand",
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true }
 );

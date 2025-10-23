@@ -6,6 +6,7 @@ const {
   getMemberProfile,
   updateMemberProfile,
   changePassword,
+  deleteMember,
 } = require("../controllers/memberController");
 
 const router = express.Router();
@@ -68,6 +69,46 @@ const router = express.Router();
  *         description: Forbidden - chỉ Admin mới được phép
  */
 router.get("/collectors", protect, admin, getAllMembers);
+
+/**
+ * @swagger
+ * /members/{memberId}:
+ *   delete:
+ *     summary: Xóa mềm (Ẩn) một thành viên theo ID (Admin only)
+ *     tags: [Members]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: memberId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID của thành viên cần xóa mềm
+ *     responses:
+ *       200:
+ *         description: Xóa mềm thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Đã ẩn/xóa mềm thành viên Nguyễn Văn A thành công."
+ *       400:
+ *         description: ID không hợp lệ
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - chỉ Admin mới được phép
+ *       404:
+ *         description: Không tìm thấy thành viên
+ */
+router.delete("/:memberId", protect, admin, deleteMember);
 
 /**
  * @swagger
